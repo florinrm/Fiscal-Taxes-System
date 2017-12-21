@@ -29,11 +29,7 @@ public class Main {
         obj.setProduse(list);
         obj.setTaxes(map);
 
-        Magazin maga = list3.get(1);
-        System.out.println(maga.nume);
-        System.out.println(maga.getTotalCuTaxeScutite());
-
-
+        
         TreeSet<String> tipuriMagazine = parsing.tipuriMagazine;
         Iterator iter = tipuriMagazine.iterator();
         Collections.sort(list3);
