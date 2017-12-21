@@ -2,9 +2,9 @@ package tax_system;
 
 import java.util.List;
 
-public class TaxaProdus {
+public class TaxaProdus implements Comparable<TaxaProdus> {
     private String denumire, taraOrigine;
-    private double taxa;
+    private double taxa; // taxa este un numar din [0, 100], nu [0, 1]
     public TaxaProdus (String denumire, String taraOrigine, double taxa)
     {
         this.denumire = denumire;
@@ -37,8 +37,13 @@ public class TaxaProdus {
     }
 
     public String toString () {
-        String result = "Denumire: " + this.denumire + "\nTara origine: " + this.taraOrigine + "\nTaxa: "
+        String result = "Categorie: " + this.denumire + "\nTara origine: " + this.taraOrigine + "\nTaxa: "
                 + this.taxa + "\n\n";
         return result;
+    }
+
+    @Override
+    public int compareTo(TaxaProdus o) {
+        return this.taraOrigine.compareTo(o.taraOrigine);
     }
 }

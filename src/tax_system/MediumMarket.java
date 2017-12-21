@@ -6,13 +6,8 @@ import java.util.Vector;
 
 public class MediumMarket extends Magazin {
 
-    public MediumMarket (String nume)
-    {
-        super(nume);
-    }
-
-    public MediumMarket (String nume, Vector<Factura> facturi) {
-        super (nume, facturi);
+    public MediumMarket (String nume, Vector<Factura> facturi, TreeSet<String> tariOrigine) {
+        super (nume, facturi, tariOrigine);
     }
 
     public TreeSet<String> getCategorii () {

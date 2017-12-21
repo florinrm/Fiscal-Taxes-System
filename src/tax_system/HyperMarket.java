@@ -1,16 +1,12 @@
 package tax_system;
 
+import java.util.TreeSet;
 import java.util.Vector;
 
 public class HyperMarket extends Magazin {
 
-    public HyperMarket (String nume)
-    {
-        super(nume);
-    }
-
-    public HyperMarket (String nume, Vector<Factura> facturi) {
-        super (nume, facturi);
+    public HyperMarket (String nume, Vector<Factura> facturi, TreeSet<String> tariOrigine) {
+        super (nume, facturi, tariOrigine);
     }
 
     @Override

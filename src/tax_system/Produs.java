@@ -50,9 +50,4 @@ public class Produs {
         this.taraOrigine = taraOrigine;
     }
 
-    public String toString () {
-        String result = "Nume produs: " + this.denumire + "\nCategorie: " + this.categorie
-                + "\nProvenienta " + this.taraOrigine + "\nPret: " + this.pret + "\n";
-        return result;
-    }
 }
