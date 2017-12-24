@@ -9,6 +9,8 @@ public class Factura implements Comparable <Factura> {
     public String denumire;
     public Vector<ProdusComandat> lista_produse;
     public TreeSet<String> tariOrigine;
+    // un Set cu toate tarile din care se importa la nivelul tuturor magazinelor, adica multimea de tari
+    // luata din produse.txt
 
     public Factura (String denumire, Vector<ProdusComandat> lista_produse, TreeSet<String> tariOrigine) {
         this.denumire = denumire;
@@ -24,6 +26,7 @@ public class Factura implements Comparable <Factura> {
         this.lista_produse.remove(produs);
     }
 
+    // selectam tarile care apar ca tari de origine in produsele din factura
     public TreeSet<String> getCountries () {
         TreeSet <String> set = new TreeSet<>();
         for (int i = 0; i < this.lista_produse.size(); ++i) {
@@ -34,13 +37,13 @@ public class Factura implements Comparable <Factura> {
 
     public String toString () {
         String result = "\n" + this.denumire + "\n\n";
-        DecimalFormat df = new DecimalFormat("#.####");
+        DecimalFormat df = new DecimalFormat("#.####"); // folosim DecimalFormat pentru aproximarea vanzarilor
         result += "Total " + df.format(this.getTotalFaraTaxe()) + " " + df.format(this.getTotalCuTaxe()) + "\n\n"
                 + "Tara\n";
-        Iterator iter = this.tariOrigine.iterator();
+        Iterator iter = this.tariOrigine.iterator(); // iteram prin toate tarile din care pot fi importate produse
         while (iter.hasNext()) {
             String country = iter.next().toString();
-            if (this.getTotalTaraFaraTaxe(country) != 0)
+            if (this.getTotalTaraFaraTaxe(country) != 0) // daca avem produse dintr-o tara, afisam
                 result += country + " " + df.format(this.getTotalTaraFaraTaxe(country)) + " "
                         + df.format(this.getTotalTaraCuTaxe(country)) + "\n";
             else
@@ -66,6 +69,7 @@ public class Factura implements Comparable <Factura> {
         return total;
     }
 
+    // adunam rezultatele metodelor, caci e mai lejer si nu duplicam cod
     public double getTotalCuTaxe () {
         return this.getTotalFaraTaxe() + this.getTotalTaxe();
     }
@@ -89,12 +93,14 @@ public class Factura implements Comparable <Factura> {
         return total;
     }
 
+    // adunam ambele metode caci este mai usor asa
     public double getTotalTaraCuTaxe (String country) {
         return this.getTotalTaraFaraTaxe (country) + this.getTaxeTara (country);
     }
 
+    // ordonam facturile in ordinea inversa, dupa denumirile lor
     @Override
     public int compareTo(Factura o) {
-        return (-1) * this.denumire.compareTo(o.denumire);
+        return new Double (this.getTotalCuTaxe()).compareTo(new Double(o.getTotalCuTaxe()));
     }
 }

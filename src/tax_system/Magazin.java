@@ -19,6 +19,7 @@ public abstract class Magazin implements IMagazin, Comparable<Magazin> {
         this.tariOrigine = tariOrigine;
     }
 
+    // cautam din ce tari sunt importate produsele din magazin
     public TreeSet<String> getCountries () {
         TreeSet<String> set = new TreeSet<>();
         for (int i = 0; i < this.facturi.size(); ++i) {
@@ -29,11 +30,12 @@ public abstract class Magazin implements IMagazin, Comparable<Magazin> {
     }
 
     public String toString () {
-        Collections.sort(this.facturi);
-        DecimalFormat df = new DecimalFormat("#.####");
+        Collections.sort(this.facturi); // sortam facturile
+        DecimalFormat df = new DecimalFormat("#.####"); // aproximarea vanzarilor
         String result = this.nume + "\n\n" + "Total " + df.format(this.getTotalFaraTaxe()) + " "
                 + df.format(this.getTotalCuTaxe()) + " " + df.format(this.getTotalCuTaxeScutite()) + "\n\nTara\n";
         Iterator iter = this.tariOrigine.iterator();
+        // aplicam acelasi procedeu de la facturi
         while (iter.hasNext()) {
             String country = iter.next().toString();
             if (this.getTotalTaraFaraTaxe(country) != 0)
@@ -46,7 +48,8 @@ public abstract class Magazin implements IMagazin, Comparable<Magazin> {
         for (int i = 0; i < this.facturi.size(); ++i) {
             result += this.facturi.get(i);
         }
-        result = result.replaceAll(",", ".");
+        result = result.replaceAll(",", "."); // deoarece DecimalFormat pune preturile cu virgula
+        // inlocuim virgula cu punctul
         return result;
     }
 
@@ -66,6 +69,8 @@ public abstract class Magazin implements IMagazin, Comparable<Magazin> {
         return total;
     }
 
+    // daca procentul de taxe scutite e 0, returnam totalul din magazin cu tot cu taxe, altfel returnam
+    // totalul calculat cu
     public double getTotalCuTaxeScutite () {
         if (new Double(this.calculScutiriTaxe()).equals(new Double(0)))
             return this.getTotalCuTaxe();
@@ -104,13 +109,10 @@ public abstract class Magazin implements IMagazin, Comparable<Magazin> {
         }
     }
 
+    // ordonare crescatoare in functie de costul total fara taxe
     public int compareTo (Magazin maga) {
-        if (this.nume.substring(0, this.nume.length() - 2).equals(maga.nume.substring(0, maga.nume.length() - 2)))
-            return (-1) * Integer.parseInt(this.nume.substring(this.nume.length() - 1))
-                    + Integer.parseInt(maga.nume.substring(maga.nume.length() - 1));
-        else
-            return (-1) * this.type.compareTo(maga.type);
+        return new Double(this.getTotalFaraTaxe()).compareTo(new Double(maga.getTotalFaraTaxe()));
     }
 
-    public abstract double calculScutiriTaxe (); // cu valori din [0, 1]
+    public abstract double calculScutiriTaxe (); // cu valori din [0, 1)
 }
