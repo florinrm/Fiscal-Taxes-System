@@ -6,8 +6,7 @@ import java.awt.*;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -70,7 +69,6 @@ public class AppStart extends JFrame {
 
     public void login_account (String username, String password) {
         File data_file = new File ("login.txt");
-        // HashMap <String, String> map = new HashMap<>();
         if (!data_file.exists())
         {
             succeded.setText("Account doesn't exist!");
@@ -86,7 +84,7 @@ public class AppStart extends JFrame {
                 if (username.equals(data[0])) {
                     if (password.equals(data[1])) {
                         succeded.setText("Logged in succesfully!");
-                        new Main();
+                        new WelcomePage(data[0]);
                         setVisible(false); //you can't see me!
                         dispose();
                         return;
@@ -104,7 +102,7 @@ public class AppStart extends JFrame {
     }
 
     public AppStart () {
-        super ("Welcome");
+        super ("Application Login");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setBackground(Color.BLUE);
         this.setMinimumSize(new Dimension(400, 200));
@@ -114,12 +112,16 @@ public class AppStart extends JFrame {
         this.panel = new JPanel();
         this.pass = new JPasswordField(25);
         this.username = new JLabel("Username", JLabel.CENTER);
-        this.password = new JLabel("Password");
+        this.password = new JLabel("Password", JLabel.CENTER);
+        this.username.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        this.password.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         this.login_button = new JButton ("Login");
         this.create_account = new JButton("Create new account");
         this.succeded = new JLabel();
+        ImageIcon icon = new ImageIcon("Apps-preferences-desktop-user-password-icon.png");
+        this.setIconImage(icon.getImage());
+        this.succeded.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         this.panel.setLayout(new BoxLayout(this.panel, BoxLayout.Y_AXIS));
-        //this.panel.setBackground(Color.BLUE);
         this.create_account.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -138,6 +140,7 @@ public class AppStart extends JFrame {
                 }
             }
         });
+        this.login_button.setMnemonic(KeyEvent.VK_ENTER);
         this.buttons_panel = new JPanel();
         this.buttons_panel.setLayout(new FlowLayout());
         this.panel.setMinimumSize(new Dimension (300, 400));
