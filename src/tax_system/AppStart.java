@@ -147,10 +147,15 @@ public class AppStart extends JFrame {
         this.buttons_panel.add(this.login_button);
         this.buttons_panel.add(this.create_account);
         this.panel.add(this.username);
+        this.panel.add(Box.createRigidArea(new Dimension(5,10))); // vrem sa aerisim putin
         this.panel.add(this.user);
+        this.panel.add(Box.createRigidArea(new Dimension(5,10)));
         this.panel.add(this.password);
+        this.panel.add(Box.createRigidArea(new Dimension(5,10)));
         this.panel.add(this.pass);
+        this.panel.add(Box.createRigidArea(new Dimension(5,10)));
         this.panel.add(this.buttons_panel);
+        this.panel.add(Box.createRigidArea(new Dimension(5,10)));
         this.panel.add(this.succeded);
         this.add(panel);
         this.pack();

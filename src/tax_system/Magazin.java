@@ -15,23 +15,14 @@ public abstract class Magazin implements IMagazin, Comparable<Magazin> {
     public Magazin (String nume, Vector <Factura> facturi, TreeSet<String> tariOrigine) {
         this.nume = nume;
         this.facturi = facturi;
-        this.type = this.getClass().toString();
+        this.type = this.getClass().toString(); // tipul magazinului, pe care il iau din getClass si imi da direct
+        // tipul magazinului
         this.tariOrigine = tariOrigine;
-    }
-
-    // cautam din ce tari sunt importate produsele din magazin
-    public TreeSet<String> getCountries () {
-        TreeSet<String> set = new TreeSet<>();
-        for (int i = 0; i < this.facturi.size(); ++i) {
-            set.addAll(this.facturi.get(i).getCountries());
-        }
-        Iterator iter = set.iterator();
-        return set;
     }
 
     public String toString () {
         Collections.sort(this.facturi); // sortam facturile
-        DecimalFormat df = new DecimalFormat("#.####"); // aproximarea vanzarilor
+        DecimalFormat df = new DecimalFormat("#.####"); // aproximarea procentelor vanzarilor
         String result = this.nume + "\n\n" + "Total " + df.format(this.getTotalFaraTaxe()) + " "
                 + df.format(this.getTotalCuTaxe()) + " " + df.format(this.getTotalCuTaxeScutite()) + "\n\nTara\n";
         Iterator iter = this.tariOrigine.iterator();
@@ -70,7 +61,7 @@ public abstract class Magazin implements IMagazin, Comparable<Magazin> {
     }
 
     // daca procentul de taxe scutite e 0, returnam totalul din magazin cu tot cu taxe, altfel returnam
-    // totalul calculat cu
+    // totalul calculat cu procentul de taxe scutite aka calculTaxeScutite
     public double getTotalCuTaxeScutite () {
         if (new Double(this.calculScutiriTaxe()).equals(new Double(0)))
             return this.getTotalCuTaxe();

@@ -10,6 +10,7 @@ public class MediumMarket extends Magazin {
         super (nume, facturi, tariOrigine);
     }
 
+    // selectam categoriile de produse din MediumMarket
     public TreeSet<String> getCategorii () {
         TreeSet<String> set = new TreeSet<>();
         for (int i = 0; i < super.facturi.size(); ++i) {
@@ -20,6 +21,7 @@ public class MediumMarket extends Magazin {
         return set;
     }
 
+    // calculam pretul total al produselor (inclusiv taxe) dupa o categorie data
     public double getTotalCategorie (String categorie) {
         double total = 0;
         for (int i = 0; i < super.facturi.size(); ++i) {
@@ -33,6 +35,7 @@ public class MediumMarket extends Magazin {
         return total;
     }
 
+    // calculam procentul de scutiri de taxe
     @Override
     public double calculScutiriTaxe() {
         TreeSet<String> categorii = this.getCategorii();

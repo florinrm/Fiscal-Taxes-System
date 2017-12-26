@@ -2,8 +2,8 @@ package tax_system;
 
 public class ProdusComandat {
     private Produs produs;
-    private double taxa;
-    private int cantitate;
+    private double taxa; // procentul de taxa aplicat produsului
+    private int cantitate; // cantitatea de produse
 
     public ProdusComandat (Produs produs, double taxa, int cantitate)
     {

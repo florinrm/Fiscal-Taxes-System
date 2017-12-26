@@ -7,17 +7,19 @@ import java.util.Vector;
 
 public class FileParsing {
     public TreeSet<String> tariOrigine = new TreeSet<>();
-    public TreeSet<String> categorii = new TreeSet<>();
+    /* lista cu tarile de origine (puteam sa fac hardcodat, dar da mai bine asa :)) */
     public TreeSet<String> tipuriMagazine = new TreeSet<>(new Comparator<String>() {
         @Override
         public int compare(String o1, String o2) {
             return o2.compareTo(o1);
         }
     });
+    /* lista cu categoriile ordonate in ordine inversas (iarasi puteam sa fac hardcodat, dar am zis sa fiu
+     cu bun simt :)) */
 
     public FileParsing () {};
 
-    // Factory pattern
+    // Factory pattern, o fac privata caci o folosesc doar aici, la fel ca celelalte metode private
     private Magazin getMagazin (String name, String shop_name, Vector<Factura> list, TreeSet<String> tariOrigine) {
         if (name.equals("MiniMarket"))
             return new MiniMarket(shop_name, list, tariOrigine);
@@ -28,6 +30,7 @@ public class FileParsing {
         return null;
     }
 
+    // cautarea de produs, in functie de numele acesteia si de tara ei de origine
     private Produs findProdus (List <Produs> list, String denumire, String taraOrigine)
     {
         for (int i = 0; i < list.size(); ++i)
@@ -39,48 +42,45 @@ public class FileParsing {
         return null;
     }
 
-    private double findTaxa (List <TaxaProdus> list, String denumire, String taraOrigine)
-    {
-        for (int i = 0; i < list.size(); ++i)
-        {
-            if (list.get(i).getDenumire().equals(denumire)
-                    && list.get(i).getTaraOrigine().equals(taraOrigine))
-                return list.get(i).getTaxa();
-        }
-        return -1;
-    }
-
-    // parsing taxe.txt
-    public ArrayList <TaxaProdus> getTaxe (String filename) {
-        ArrayList <TaxaProdus> list = new ArrayList<>();
+    public HashMap<String, HashMap<String, Double>> getTaxe1 (String filename) {
+        HashMap<String, HashMap<String, Double>> map = new HashMap<>();
         Scanner scan = null;
         try {
-            scan = new Scanner (new File(filename));
+            scan = new Scanner(new File(filename));
             String first_line = scan.nextLine();
             String [] data = first_line.split(" ");
             ArrayList <String> countries = new ArrayList <>();
             for (int i = 1; i < data.length; ++i)
             {
                 countries.add(data[i]);
-                this.tariOrigine.add(data[i]);
+                this.tariOrigine.add(data[i]); // adaug in TreeSet-ul de tari de origine
             }
-            while (scan.hasNextLine())
-            {
+            while (scan.hasNextLine()) {
                 String line = scan.nextLine();
                 String[] members = line.split(" ");
-                for (int i = 0; i < countries.size(); ++i)
-                {
-                    list.add(new TaxaProdus(members[0], countries.get(i), Double.parseDouble(members[i + 1])));
+                HashMap<String, Double> map_value = new HashMap<>();
+                for (int i = 0; i < countries.size(); ++i) {
+                    map_value.put(countries.get(i), Double.parseDouble(members[i + 1]));
                 }
+                map.put(members[0], map_value);
             }
-            scan.close();
-        } catch (FileNotFoundException e)
-        {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        return list;
+        return map;
     }
 
+    private double findTaxa1 (HashMap<String, HashMap<String, Double>> map, String categorie, String taraOrigine) {
+        for (Map.Entry<String, HashMap<String, Double>> entry1: map.entrySet()) {
+            for (Map.Entry<String, Double> entry2: entry1.getValue().entrySet()) {
+                if (categorie.equals(entry1.getKey()) && taraOrigine.equals(entry2.getKey()))
+                    return entry2.getValue();
+            }
+        }
+        return -1;
+    }
+
+    // clasa privata pentru a stoca tipul si numele magazinului
     private class ShopType {
         public String name;
         public String type;
@@ -96,7 +96,7 @@ public class FileParsing {
         }
     }
 
-    // Parsing produse.txt
+    // Parsing produse.txt - lista de obiecte de tip Produs
     public ArrayList<Produs> getListProdus (String filename) {
         ArrayList <Produs> list = new ArrayList <> ();
         Scanner scan = null;
@@ -123,8 +123,8 @@ public class FileParsing {
         return list;
     }
 
-    // Parsing facturi.txt
-    public ArrayList <Magazin> getMagazine (String filename, List<Produs> produse, List<TaxaProdus> taxe) {
+    // Parsing facturi.txt - lista de magazine
+    public ArrayList <Magazin> getMagazine (String filename, List<Produs> produse, HashMap<String, HashMap<String, Double>> taxe) {
         ArrayList <Magazin> list = new ArrayList<>();
         Scanner scan = null;
         try {
@@ -149,7 +149,7 @@ public class FileParsing {
                         if (data.indexOf("Denumire") == -1) {
                             String[] info = data.split(" ");
                             Produs produs = findProdus(produse, info[0], info[1]); // produsul
-                            double taxa = findTaxa(taxe, produs.getCategorie(), info[1]); // taxa
+                            double taxa = findTaxa1(taxe, produs.getCategorie(), info[1]); // taxa
                             int cantitate = Integer.parseInt(info[2]);
                             fact.add (new ProdusComandat(produs, taxa, cantitate));
                         }
@@ -164,10 +164,10 @@ public class FileParsing {
                     }
                 }
             }
-            // System.out.println(data); // adaugare manarie a la Mihalache aka fa in plm parsare cu ultima linie boss
+            // adaugare manarie a la Mihalache aka sa parsezi ultima linie, caci citirea din while nu o ia in considerare
             String[] parsing = data.split(" ");
             Produs product = findProdus(produse, parsing[0], parsing[1]);
-            double tax = findTaxa(taxe, product.getCategorie(), parsing[1]);
+            double tax = findTaxa1(taxe, product.getCategorie(), parsing[1]);
             int quantity = Integer.parseInt(parsing[2]);
             ProdusComandat prod = new ProdusComandat(product, tax, quantity); // last line
             Vector <Factura> last_facturi = map2.get(count - 1);
@@ -176,6 +176,7 @@ public class FileParsing {
             last.addProdus(prod);
             last_facturi.add(last);
             map2.put(count - 1, last_facturi);
+            // construim obiectele de tip Magazin si le adaugam in lista de obiecte Magazin
             for (int i = 0; i < count; ++i) {
                 Magazin shop = getMagazin(map.get(i).name, map.get(i).type, map2.get(i), this.tariOrigine);
                 list.add(shop);
@@ -185,21 +186,5 @@ public class FileParsing {
             e.printStackTrace();
         }
         return list;
-    }
-
-    public HashMap <String, HashMap <String, Double>> getDictionar (String filename) {
-        HashMap <String, HashMap <String, Double>> map = new HashMap<> ();
-        Scanner scan = null;
-        try {
-            scan = new Scanner (new File(filename));
-            String firstLine = scan.nextLine();
-            String[] data = firstLine.split(" ");
-
-            for (int i = 1; i < data.length; i++)
-            scan.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return map;
     }
 }

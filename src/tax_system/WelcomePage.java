@@ -23,6 +23,8 @@ public class WelcomePage extends JFrame {
         this.setBackground(Color.BLUE);
         this.setMinimumSize(new Dimension(600, 400));
         this.getContentPane().setLayout(new BorderLayout(10, 10));
+        ImageIcon icon = new ImageIcon("Desktop-icon.png");
+        this.setIconImage(icon.getImage());
         this.user_info = new JLabel("You are logged as: " + username);
         this.user_info.setFont(new Font("Georgia", Font.CENTER_BASELINE, 12));
         this.info1 = new JPanel();
@@ -67,6 +69,50 @@ public class WelcomePage extends JFrame {
         JButton taxe = new JButton("Load taxe");
         JButton facturi = new JButton("Load facturi");
         JButton gestiune = new JButton ("Gestiune");
+        JButton delete_produs = new JButton("Delete produse.txt");
+        JButton delete_taxe = new JButton("Delete taxe.txt");
+        JButton delete_facturi = new JButton("Delete facturi.txt");
+        JLabel info = new JLabel();
+
+        delete_produs.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JButton button = (JButton) e.getSource();
+                if (button.getText().equals(delete_produs.getText())) {
+                    File file = new File ("produse.txt");
+                    if (file.exists()) {
+                        file.delete();
+                        info.setText("produse.txt deleted");
+                    }
+                }
+            }
+        });
+        delete_taxe.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JButton button = (JButton) e.getSource();
+                if (button.getText().equals(delete_taxe.getText())) {
+                    File file = new File ("taxe.txt");
+                    if (file.exists()) {
+                        file.delete();
+                        info.setText("taxe.txt deleted");
+                    }
+                }
+            }
+        });
+        delete_facturi.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JButton button = (JButton) e.getSource();
+                if (button.getText().equals(delete_facturi.getText())) {
+                    File file = new File ("facturi.txt");
+                    if (file.exists()) {
+                        file.delete();
+                        info.setText("facturi.txt deleted");
+                    }
+                }
+            }
+        });
 
         JFileChooser produs_file = new JFileChooser();
         JFileChooser taxe_file = new JFileChooser();
@@ -77,15 +123,22 @@ public class WelcomePage extends JFrame {
                 JButton button = (JButton) e.getSource();
                 if (button.getText().equals(produs.getText()))
                 {
-                    produs_file.setDialogTitle("Choose a file");
-                    produs_file.setCurrentDirectory(new File("C:\\"));
-                    produs_file.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                    produs_file.showOpenDialog(null);
-                    File file = produs_file.getSelectedFile();
-                    try {
-                        Files.copy(file.toPath(), new File ("produs.txt").toPath());
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
+                    if (! new File ("produse.txt").exists()) {
+                        produs_file.setDialogTitle("Alege produsele");
+                        produs_file.setCurrentDirectory(new File("C:\\"));
+                        produs_file.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                        produs_file.showOpenDialog(null);
+                        File file = produs_file.getSelectedFile();
+                        while (file == null) {
+                            info.setText("Choose a file!");
+                            taxe_file.showOpenDialog(null);
+                            file = taxe_file.getSelectedFile();
+                        }
+                        try {
+                            Files.copy(file.toPath(), new File ("produse.txt").toPath());
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        }
                     }
                 }
             }
@@ -96,11 +149,17 @@ public class WelcomePage extends JFrame {
                 JButton button = (JButton) e.getSource();
                 if (button.getText().equals(taxe.getText()))
                 {
-                    taxe_file.setDialogTitle("Choose a file");
+                    new File ("taxe.txt").delete();
+                    taxe_file.setDialogTitle("Alege taxele");
                     taxe_file.setCurrentDirectory(new File("C:\\"));
                     taxe_file.setFileSelectionMode(JFileChooser.FILES_ONLY);
                     taxe_file.showOpenDialog(null);
                     File file = taxe_file.getSelectedFile();
+                    while (file == null) {
+                        info.setText("Choose a file!");
+                        taxe_file.showOpenDialog(null);
+                        file = taxe_file.getSelectedFile();
+                    }
                     try {
                         Files.copy(file.toPath(), new File ("taxe.txt").toPath());
                     } catch (IOException e1) {
@@ -115,11 +174,16 @@ public class WelcomePage extends JFrame {
                 JButton button = (JButton) e.getSource();
                 if (button.getText().equals(facturi.getText()))
                 {
-                    facturi_file.setDialogTitle("Choose a file");
+                    facturi_file.setDialogTitle("Alege facturile");
                     facturi_file.setCurrentDirectory(new File("C:\\"));
                     facturi_file.setFileSelectionMode(JFileChooser.FILES_ONLY);
                     facturi_file.showOpenDialog(null);
                     File file = facturi_file.getSelectedFile();
+                    while (file == null) {
+                        info.setText("Choose a file!");
+                        taxe_file.showOpenDialog(null);
+                        file = taxe_file.getSelectedFile();
+                    }
                     try {
                         Files.copy(file.toPath(), new File ("facturi.txt").toPath());
                     } catch (IOException e1) {
@@ -156,10 +220,12 @@ public class WelcomePage extends JFrame {
                         if (fisier.getAbsolutePath().contains("produse.txt"))
                             count++;
                     }
-                    if (count == 3)
+                    if (count == 3) {
                         new Main();
+                        info.setText("Gestiunea s-a facut!");
+                    }
                     else
-                        System.out.println("NOOOOPE");
+                        info.setText("Pune boss toate fisierele");
                 }
             }
         });
@@ -168,11 +234,19 @@ public class WelcomePage extends JFrame {
         panel2.add(Box.createRigidArea(new Dimension(5,10)));
         panel2.add(produs);
         panel2.add(Box.createRigidArea(new Dimension(5,10)));
+        panel2.add(delete_produs);
+        panel2.add(Box.createRigidArea(new Dimension(5,10)));
         panel2.add(taxe);
+        panel2.add(Box.createRigidArea(new Dimension(5,10)));
+        panel2.add(delete_taxe);
         panel2.add(Box.createRigidArea(new Dimension(5,10)));
         panel2.add(facturi);
         panel2.add(Box.createRigidArea(new Dimension(5,10)));
+        panel2.add(delete_facturi);
+        panel2.add(Box.createRigidArea(new Dimension(5,10)));
         panel2.add(gestiune);
+        panel2.add(Box.createRigidArea(new Dimension(5,10)));
+        panel2.add(info);
 
         this.tabs.setBorder(BorderFactory.createCompoundBorder(null, paddingBorder));
         this.tabs.setFont(new Font( "Georgia", Font.PLAIN, 14 ));
@@ -182,7 +256,6 @@ public class WelcomePage extends JFrame {
         this.tabs.add("  Statistics  ", new JPanel());
 
 
-
         this.info2 = new JPanel();
         info2.setLayout(new BoxLayout(this.info2, BoxLayout.X_AXIS));
         this.info2.add(tabs); // adaugam in info2 JTabbedPane
@@ -190,24 +263,4 @@ public class WelcomePage extends JFrame {
         this.setVisible(true);
         this.pack();
     }
-    /*
-    public static void main (String[] args) {
-        try {
-            UIManager.setLookAndFeel(
-                    UIManager.getSystemLookAndFeelClassName());
-        }
-        catch (UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
-        }
-        catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        catch (InstantiationException e) {
-            e.printStackTrace();
-        }
-        catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        new WelcomePage();
-    } */
 }

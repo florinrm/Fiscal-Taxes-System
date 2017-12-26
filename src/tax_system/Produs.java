@@ -1,11 +1,5 @@
 package tax_system;
 
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Scanner;
-import java.io.File;
-import java.util.List;
-
 public class Produs {
     private String denumire, categorie, taraOrigine;
     private double pret;

@@ -1,18 +1,14 @@
 package tax_system;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.TreeMap;
+import java.util.*;
 
 public final class Gestiune {
-    public ArrayList<Produs> produse;
-    public ArrayList<Magazin> magazine;
-    public TreeMap<String, HashMap<String, Double>> taxes;
+    public ArrayList<Produs> produse = new ArrayList<>();
+    public ArrayList<Magazin> magazine = new ArrayList<>();
+    public HashMap<String, HashMap<String, Double>> taxes = new HashMap<>();
+    public TreeSet<String> tipuriMagazine = new TreeSet<>();
 
     private Gestiune () {
-        this.produse = new ArrayList<>();
-        this.magazine = new ArrayList<>();
-        this.taxes = new TreeMap<>();
     };
 
     public void setProduse (ArrayList<Produs> produse) {
@@ -23,20 +19,33 @@ public final class Gestiune {
         this.magazine = magazine;
     }
 
-    public void setTaxes (TreeMap<String, HashMap<String, Double>> taxes) {
+    public void setTaxes (HashMap<String, HashMap<String, Double>> taxes) {
         this.taxes = taxes;
+    }
+
+    public void setTipuriMagazine (TreeSet<String> tipuriMagazine) {
+        this.tipuriMagazine = tipuriMagazine;
     }
 
     public String toString () {
         String result = "";
-        for (int i = 0; i < this.magazine.size(); ++i) {
-
+        Iterator iter = tipuriMagazine.iterator();
+        Collections.sort(magazine);
+        while (iter.hasNext()) {
+            String type = iter.next().toString();
+            result += type + "\n";
+            for (int i = 0; i < magazine.size(); ++i) {
+                // parsam tipul magazinului (in interiorul clasei imi erau aruncate exceptii cand faceam parsarea
+                // asa ca o fac aici
+                if (type.equals(magazine.get(i).type.split(" ")[1].split("_")[1].substring(7)))
+                    result += magazine.get(i) + "\n";
+            }
         }
         return result;
     }
 
+    // Singleton pattern
     private static final Gestiune obj = new Gestiune();
-
     public static Gestiune getInstance ()
     {
         return obj;
