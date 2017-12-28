@@ -3,7 +3,7 @@ package tax_system;
 import java.util.*;
 
 public final class Gestiune {
-    public ArrayList<Produs> produse = new ArrayList<>();
+    public Vector<Produs> produse = new Vector<>();
     public ArrayList<Magazin> magazine = new ArrayList<>();
     public HashMap<String, HashMap<String, Double>> taxes = new HashMap<>();
     public TreeSet<String> tipuriMagazine = new TreeSet<>();
@@ -11,7 +11,7 @@ public final class Gestiune {
     private Gestiune () {
     };
 
-    public void setProduse (ArrayList<Produs> produse) {
+    public void setProduse (Vector<Produs> produse) {
         this.produse = produse;
     }
 

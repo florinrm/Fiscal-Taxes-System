@@ -7,10 +7,14 @@ public class Main {
 
     public Main () {
         FileParsing parsing = new FileParsing();
-        ArrayList <Produs> list = parsing.getListProdus("produse.txt");
+        Vector <Produs> list = parsing.getListProdus("produse.txt");
         HashMap <String, HashMap<String, Double>> map = parsing.getTaxe1("taxe.txt");
         ArrayList <Magazin> list3 = parsing.getMagazine("facturi.txt", list, map);
         TreeSet<String> tipuriMagazine = parsing.tipuriMagazine;
+
+        Collections.sort(list);
+        for (int i = 0; i < list.size(); ++i)
+            System.out.println(list.get(i));
 
         Gestiune obj = Gestiune.getInstance();
         obj.setMagazine(list3);
@@ -20,6 +24,7 @@ public class Main {
         try {
             System.setOut(new PrintStream(new File("output.txt")));
             System.out.println(obj);
+            System.setOut(System.out);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -100,6 +100,34 @@ public abstract class Magazin implements IMagazin, Comparable<Magazin> {
         }
     }
 
+    public double getTotalCategorieFaraTaxe (String country) {
+        double total = 0;
+        for (int i = 0; i < this.facturi.size(); ++i) {
+            total += this.facturi.get(i).getTotalCategorieFaraTaxe (country);
+        }
+        return total;
+    }
+
+    public double getTotalCategorieCuTaxe (String country) {
+        double total = 0;
+        for (int i = 0; i < this.facturi.size(); ++i) {
+            total += this.facturi.get(i).getTotalCategorieCuTaxe (country);
+        }
+        return total;
+    }
+
+    public double getCategorieTaraCuTaxeScutite (String categorie) {
+        if (this.calculScutiriTaxe() == 0)
+            return this.getTotalCategorieCuTaxe (categorie);
+        else {
+            double total = 0;
+            for (int i = 0; i < this.facturi.size(); ++i) {
+                total += this.facturi.get(i).getTotalCategorieCuTaxe (categorie);
+            }
+            return total * (1 - this.calculScutiriTaxe());
+        }
+    }
+
     // ordonare crescatoare in functie de costul total fara taxe
     public int compareTo (Magazin maga) {
         return new Double(this.getTotalFaraTaxe()).compareTo(new Double(maga.getTotalFaraTaxe()));

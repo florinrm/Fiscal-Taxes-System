@@ -16,6 +16,7 @@ public class FileParsing {
     });
     /* lista cu categoriile ordonate in ordine inversas (iarasi puteam sa fac hardcodat, dar am zis sa fiu
      cu bun simt :)) */
+    public TreeSet<String> categoriiProduse = new TreeSet<>();
 
     public FileParsing () {};
 
@@ -97,8 +98,8 @@ public class FileParsing {
     }
 
     // Parsing produse.txt - lista de obiecte de tip Produs
-    public ArrayList<Produs> getListProdus (String filename) {
-        ArrayList <Produs> list = new ArrayList <> ();
+    public Vector<Produs> getListProdus (String filename) {
+        Vector <Produs> list = new Vector <> ();
         Scanner scan = null;
         try {
             scan = new Scanner (new File(filename));
@@ -114,6 +115,7 @@ public class FileParsing {
                 for (int i = 0; i < countries.size(); ++i)
                 {
                     list.add(new Produs (members[0], members[1], countries.get(i), Double.parseDouble(members[i + 2])));
+                    this.categoriiProduse.add(members[1]);
                 }
             }
             scan.close();
@@ -186,5 +188,19 @@ public class FileParsing {
             e.printStackTrace();
         }
         return list;
+    }
+
+    public double findPretProdusDupaTara (String denumire, String categorie, String taraOrigine, List<Produs> list) {
+        for (int i = 0; i < list.size(); ++i) {
+            if (denumire.equals(list.get(i).getDenumire())
+                    && taraOrigine.equals(list.get(i).getTaraOrigine())
+                    && categorie.equals(list.get(i).getCategorie()))
+                return list.get(i).getPret();
+        }
+        return 0;
+    }
+
+    public void writeFileProduse (List<Produs> list_produse) {
+
     }
 }

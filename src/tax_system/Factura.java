@@ -98,6 +98,31 @@ public class Factura implements Comparable <Factura> {
         return this.getTotalTaraFaraTaxe (country) + this.getTaxeTara (country);
     }
 
+    // calcul total fara taxe pe o categorie data
+    public double getTotalCategorieFaraTaxe (String categorie) {
+        double total = 0;
+        for (int i = 0; i < this.lista_produse.size(); ++i) {
+            if (categorie.equals(this.lista_produse.get(i).getProdus().getCategorie()))
+                total += this.lista_produse.get(i).getProdus().getPret() * this.lista_produse.get(i).getCantitate();
+        }
+        return total;
+    }
+
+    public double getTaxeCategorie (String categorie) {
+        double total = 0;
+        for (int i = 0; i < this.lista_produse.size(); ++i) {
+            if (categorie.equals(this.lista_produse.get(i).getProdus().getCategorie()))
+                total += this.lista_produse.get(i).getCantitate()
+                        * this.lista_produse.get(i).getTaxa() * this.lista_produse.get(i).getProdus().getPret() / 100;
+        }
+        return total;
+    }
+
+    // adunam ambele metode caci este mai usor asa
+    public double getTotalCategorieCuTaxe (String categorie) {
+        return this.getTotalCategorieFaraTaxe (categorie) + this.getTaxeCategorie (categorie);
+    }
+
     // ordonam facturile in ordinea inversa, dupa denumirile lor
     @Override
     public int compareTo(Factura o) {

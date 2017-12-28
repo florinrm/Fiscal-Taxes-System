@@ -8,6 +8,8 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.text.DecimalFormat;
+import java.util.*;
 
 public class WelcomePage extends JFrame {
     private JLabel user_info;
@@ -17,11 +19,72 @@ public class WelcomePage extends JFrame {
 
     private JButton logout;
 
+    public boolean checkFiles () {
+        File folder = new File (".");
+        File[] files = folder.listFiles();
+        int count = 0;
+        for (File fisier: files) {
+            if (fisier.getAbsolutePath().contains("facturi.txt"))
+                count++;
+            if (fisier.getAbsolutePath().contains("taxe.txt"))
+                count++;
+            if (fisier.getAbsolutePath().contains("produse.txt"))
+                count++;
+        }
+        return (count == 3);
+    }
+
+    public Magazin getMagazinMaximum (ArrayList<Magazin> list) {
+        Magazin result = list.get(0);
+        for (int i = 0; i < list.size(); ++i) {
+            if (new Double(result.getTotalCuTaxe()).compareTo(new Double(list.get(i).getTotalCuTaxe())) <= 0)
+                result = list.get(i);
+        }
+        return result;
+    }
+
+    public Factura getFacturaMaxim (ArrayList<Magazin> list) {
+        Factura result = list.get(0).facturi.get(0);
+        for (int i = 0; i < list.size(); ++i) {
+            for (int j = 0; j < list.get(i).facturi.size(); ++j) {
+                if (new Double(result.getTotalFaraTaxe()).compareTo(new Double(list.get(i).facturi.get(j).getTotalFaraTaxe())) <= 0)
+                    result = list.get(i).facturi.get(j);
+            }
+        }
+        return result;
+    }
+
+    public Magazin searchFactura (ArrayList<Magazin> list, Factura factura) {
+        for (int i = 0; i < list.size(); ++i) {
+            if (list.get(i).facturi.contains(factura))
+                return list.get(i);
+        }
+        return null;
+    }
+
+    public Magazin getMagazinMaxTara (ArrayList<Magazin> list, String country) {
+        Magazin result = list.get(0);
+        for (int i = 0; i < list.size(); ++i) {
+            if (new Double(list.get(i).getTotalTaraCuTaxe(country)).compareTo(result.getTotalTaraCuTaxe(country)) >= 0)
+                result = list.get(i);
+        }
+        return result;
+    }
+
+    public Magazin getMagazinMaxCategorie (ArrayList<Magazin> list, String categorie) {
+        Magazin result = list.get(0);
+        for (int i = 0; i < list.size(); ++i) {
+            if (new Double(list.get(i).getTotalCategorieCuTaxe(categorie)).compareTo(result.getTotalCategorieCuTaxe(categorie)) >= 0)
+                result = list.get(i);
+        }
+        return result;
+    }
+
     public WelcomePage (String username) {
         super ("Application Home");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setBackground(Color.BLUE);
-        this.setMinimumSize(new Dimension(600, 400));
+        this.setMinimumSize(new Dimension(700, 400));
         this.getContentPane().setLayout(new BorderLayout(10, 10));
         ImageIcon icon = new ImageIcon("Desktop-icon.png");
         this.setIconImage(icon.getImage());
@@ -83,6 +146,7 @@ public class WelcomePage extends JFrame {
                     if (file.exists()) {
                         file.delete();
                         info.setText("produse.txt deleted");
+                        tabs.setEnabledAt(3, false);
                     }
                 }
             }
@@ -96,6 +160,7 @@ public class WelcomePage extends JFrame {
                     if (file.exists()) {
                         file.delete();
                         info.setText("taxe.txt deleted");
+                        tabs.setEnabledAt(3, false);
                     }
                 }
             }
@@ -109,6 +174,7 @@ public class WelcomePage extends JFrame {
                     if (file.exists()) {
                         file.delete();
                         info.setText("facturi.txt deleted");
+                        tabs.setEnabledAt(3, false);
                     }
                 }
             }
@@ -139,6 +205,8 @@ public class WelcomePage extends JFrame {
                         } catch (IOException e1) {
                             e1.printStackTrace();
                         }
+                        if (!tabs.isEnabledAt(3) && checkFiles())
+                            tabs.setEnabledAt(3, true);
                     }
                 }
             }
@@ -165,6 +233,8 @@ public class WelcomePage extends JFrame {
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     }
+                    if (!tabs.isEnabledAt(3) && checkFiles())
+                        tabs.setEnabledAt(3, true);
                 }
             }
         });
@@ -189,38 +259,18 @@ public class WelcomePage extends JFrame {
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     }
+                    if (!tabs.isEnabledAt(3) && checkFiles())
+                        tabs.setEnabledAt(3, true);
                 }
             }
         });
-        File folder = new File (".");
-        File[] files = folder.listFiles();
-        int count = 0;
-        for (File fisier: files) {
-            if (fisier.getAbsolutePath().contains("facturi.txt"))
-                count++;
-            if (fisier.getAbsolutePath().contains("taxe.txt"))
-                count++;
-            if (fisier.getAbsolutePath().contains("produse.txt"))
-                count++;
-        }
 
         gestiune.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JButton button = (JButton) e.getSource();
                 if (button.getText().equals(gestiune.getText())) {
-                    File folder = new File (".");
-                    File[] files = folder.listFiles();
-                    int count = 0;
-                    for (File fisier: files) {
-                        if (fisier.getAbsolutePath().contains("facturi.txt"))
-                            count++;
-                        if (fisier.getAbsolutePath().contains("taxe.txt"))
-                            count++;
-                        if (fisier.getAbsolutePath().contains("produse.txt"))
-                            count++;
-                    }
-                    if (count == 3) {
+                    if (checkFiles()) {
                         new Main();
                         info.setText("Gestiunea s-a facut!");
                     }
@@ -248,13 +298,113 @@ public class WelcomePage extends JFrame {
         panel2.add(Box.createRigidArea(new Dimension(5,10)));
         panel2.add(info);
 
+
+        FileParsing parsing = new FileParsing();
+        Vector<Produs> list_produse = parsing.getListProdus("produse.txt");
+        HashMap <String, HashMap<String, Double>> map = parsing.getTaxe1("taxe.txt");
+        ArrayList <Magazin> list_magazine = parsing.getMagazine("facturi.txt", list_produse, map);
+        DecimalFormat df = new DecimalFormat("#.####");
+
+
+        JPanel panel4 = new JPanel();
+        panel4.setLayout(new BoxLayout(panel4, BoxLayout.X_AXIS));
+        JPanel box_panel1 = new JPanel();
+        box_panel1.setLayout(new BoxLayout(box_panel1, BoxLayout.Y_AXIS));
+        JPanel box_panel2 = new JPanel();
+        box_panel2.setLayout(new BoxLayout(box_panel1, BoxLayout.Y_AXIS));
+        Magazin maximum_maga = getMagazinMaximum(list_magazine);
+
+        JLabel header1 = new JLabel("Magazinul cu cele mai mari vanzari");
+        JLabel nume_magazin1 = new JLabel("Nume: " + maximum_maga.nume);
+        JLabel total_fara_taxe1 = new JLabel("Totalul fara taxe: " + df.format(maximum_maga.getTotalFaraTaxe()).replaceAll(",", "."));
+        JLabel total_cu_taxe1 = new JLabel("Totalul cu taxe: " + df.format(maximum_maga.getTotalCuTaxe()).replaceAll(",", "."));
+        JLabel total_cu_taxe_scutite1 = new JLabel("Totalul cu taxe scutite: " + df.format(maximum_maga.getTotalCuTaxeScutite()).replaceAll(",", "."));
+
+        Factura max_factura = getFacturaMaxim(list_magazine);
+        JLabel factura_header = new JLabel ("Factura cu suma totala cea mai mare");
+        JLabel nume_factura = new JLabel ("Nume factura: " + max_factura.denumire);
+        JLabel prov_factura = new JLabel ("Magazin de provenienta: " + searchFactura(list_magazine, max_factura).nume);
+        JLabel total_fara_taxe_factura = new JLabel("Totalul fara taxe: " + df.format(max_factura.getTotalFaraTaxe()).replaceAll(",", "."));
+        JLabel total_cu_taxe_factura = new JLabel("Totalul cu taxe: " + df.format(max_factura.getTotalCuTaxe()).replaceAll(",", "."));
+
+        box_panel1.add(header1);
+        box_panel1.add(Box.createRigidArea(new Dimension(10,5)));
+        box_panel1.add(nume_magazin1);
+        box_panel1.add(Box.createRigidArea(new Dimension(10,5)));
+        box_panel1.add(total_fara_taxe1);
+        box_panel1.add(Box.createRigidArea(new Dimension(10,5)));
+        box_panel1.add(total_cu_taxe1);
+        box_panel1.add(Box.createRigidArea(new Dimension(10,5)));
+        box_panel1.add(total_cu_taxe_scutite1);
+        box_panel1.add(Box.createRigidArea(new Dimension(10,30)));
+        box_panel1.add(factura_header);
+        box_panel1.add(Box.createRigidArea(new Dimension(10,5)));
+        box_panel1.add(nume_factura);
+        box_panel1.add(Box.createRigidArea(new Dimension(10,5)));
+        box_panel1.add(prov_factura);
+        box_panel1.add(Box.createRigidArea(new Dimension(10,5)));
+        box_panel1.add(total_fara_taxe_factura);
+        box_panel1.add(Box.createRigidArea(new Dimension(10,5)));
+        box_panel1.add(total_cu_taxe_factura);
+        box_panel1.add(Box.createRigidArea(new Dimension(10,5)));
+
+        TreeSet<String> countries = parsing.tariOrigine;
+        TreeSet<String> categorii_produse = parsing.categoriiProduse;
+
+        DefaultListModel<String> model1 = new DefaultListModel<>();
+        JList<String> list_countries = new JList<>(model1);
+        list_countries.setVisibleRowCount(15);
+        list_countries.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane scrolling_countries = new JScrollPane(list_countries);
+        scrolling_countries.setMaximumSize(new Dimension(200, 300));
+        scrolling_countries.setVerticalScrollBar(new JScrollBar(JScrollBar.VERTICAL));
+        Iterator iterator1 = countries.iterator();
+        while (iterator1.hasNext()) {
+            String country = iterator1.next().toString();
+            Magazin magazin_country = getMagazinMaxTara(list_magazine, country);
+            model1.addElement("Magazinul cu cele mai mari vanzari in " + country);
+            model1.addElement("Nume: " + maximum_maga.nume);
+            model1.addElement("Totalul fara taxe: " + df.format(magazin_country.getTotalFaraTaxe()).replaceAll(",", "."));
+            model1.addElement("Totalul cu taxe: " + df.format(magazin_country.getTotalCuTaxe()).replaceAll(",", "."));
+            model1.addElement("Totalul cu taxe scutite: " + df.format(magazin_country.getTotalCuTaxeScutite()).replaceAll(",", "."));
+            model1.addElement("\n\n");
+        }
+        DefaultListModel<String> model2 = new DefaultListModel<>();
+        JList<String> list_categorii = new JList<>(model2);
+        list_categorii.setVisibleRowCount(15);
+        list_categorii.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane scrolling_categorii = new JScrollPane(list_categorii);
+        scrolling_categorii.setMaximumSize(new Dimension(200, 300));
+        scrolling_categorii.setVerticalScrollBar(new JScrollBar(JScrollBar.VERTICAL));
+        Iterator iterator2 = categorii_produse.iterator();
+        while (iterator2.hasNext()) {
+            String categorie = iterator2.next().toString();
+            System.out.println(categorie);
+            Magazin magazin_categorie = getMagazinMaxCategorie(list_magazine, categorie);
+            model2.addElement("Magazinul cu cele mai mari vanzari in " + categorie);
+            model2.addElement("Nume: " + magazin_categorie.nume);
+            model2.addElement("Totalul fara taxe: " + df.format(magazin_categorie.getTotalFaraTaxe()).replaceAll(",", "."));
+            model2.addElement("Totalul cu taxe: " + df.format(magazin_categorie.getTotalCuTaxe()).replaceAll(",", "."));
+            model2.addElement("Totalul cu taxe scutite: " + df.format(magazin_categorie.getTotalCuTaxeScutite()).replaceAll(",", "."));
+            model2.addElement("\n\n");
+        }
+
+        panel4.add(Box.createRigidArea(new Dimension(10,10)));
+        panel4.add(box_panel1);
+        panel4.add(Box.createRigidArea(new Dimension(10,10)));
+        panel4.add(scrolling_countries);
+        panel4.add(Box.createRigidArea(new Dimension(10,10)));
+        panel4.add(scrolling_categorii);
+
         this.tabs.setBorder(BorderFactory.createCompoundBorder(null, paddingBorder));
         this.tabs.setFont(new Font( "Georgia", Font.PLAIN, 14 ));
         this.tabs.add("  User Info  ", info1);
         this.tabs.add("  Load Files  ", panel2);
         this.tabs.add("  Products  ", new JPanel());
-        this.tabs.add("  Statistics  ", new JPanel());
+        this.tabs.add("  Statistics  ", panel4);
 
+        if (!checkFiles())
+            this.tabs.setEnabledAt(3, false);
 
         this.info2 = new JPanel();
         info2.setLayout(new BoxLayout(this.info2, BoxLayout.X_AXIS));
