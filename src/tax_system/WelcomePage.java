@@ -5,6 +5,8 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -80,11 +82,25 @@ public class WelcomePage extends JFrame {
         return result;
     }
 
+    public boolean checkProdus (Vector<Produs> list, String denumire, String categorie, String tara) {
+        for (int i = 0; i < list.size(); ++i) {
+            if (denumire.equals(list.get(i).getDenumire())
+                    && categorie.equals(list.get(i).getCategorie())
+                    && tara.equals(list.get(i).getTaraOrigine())) {
+                if (new Double (list.get(i).getPret()).equals(new Double(0)))
+                    return false;
+                else
+                    return true;
+            }
+        }
+        return false;
+    }
+
     public WelcomePage (String username) {
         super ("Application Home");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setBackground(Color.BLUE);
-        this.setMinimumSize(new Dimension(700, 400));
+        this.setMinimumSize(new Dimension(700, 500));
         this.getContentPane().setLayout(new BorderLayout(10, 10));
         ImageIcon icon = new ImageIcon("Desktop-icon.png");
         this.setIconImage(icon.getImage());
@@ -97,16 +113,12 @@ public class WelcomePage extends JFrame {
         logout.setVerticalTextPosition(SwingConstants.CENTER);
         logout.setVerticalAlignment(SwingConstants.CENTER);
 
-        //this.info1.setMinimumSize(new Dimension(40, 20));
         this.info1.setLayout(new BoxLayout(this.info1, BoxLayout.Y_AXIS));
         Border paddingBorder = BorderFactory.createEmptyBorder(10,0,0,0);
         Border paddingBorder1 = BorderFactory.createEmptyBorder(10,0,10,0);
         Border paddingBorder2 = BorderFactory.createEmptyBorder(10,20,10,10);
-        // Border border = BorderFactory.createLineBorder(Color.BLUE);
         user_info.setBorder(BorderFactory.createCompoundBorder(null, paddingBorder1));
-        // user_info.setHorizontalAlignment(JLabel.LEFT);
         logout.setBorder(BorderFactory.createCompoundBorder(null, paddingBorder2));
-        // logout.setHorizontalTextPosition(SwingConstants.CENTER);
         this.info1.add(user_info);
         JPanel button_panel = new JPanel();
         button_panel.setLayout(new BoxLayout(button_panel, BoxLayout.Y_AXIS));
@@ -348,9 +360,160 @@ public class WelcomePage extends JFrame {
         box_panel1.add(total_cu_taxe_factura);
         box_panel1.add(Box.createRigidArea(new Dimension(10,5)));
 
+        JPanel panel3 = new JPanel();
+        DefaultListModel<String> model_produse = new DefaultListModel<>();
+        JList<String> list1 = new JList<>(model_produse);
+        list1.setVisibleRowCount(5);
+        list1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        panel3.setLayout(new BoxLayout(panel3, BoxLayout.X_AXIS));
+        JScrollPane scrolling = new JScrollPane(list1);
+        scrolling.setMaximumSize(new Dimension(150, 500));
+        scrolling.setVerticalScrollBar(new JScrollBar(JScrollBar.VERTICAL));
+        Collections.sort(list_produse, new Comparator<Produs>() {
+            @Override
+            public int compare(Produs o1, Produs o2) {
+                if (o1.getCategorie().equals(o2.getCategorie()))
+                    return (-1) * o1.getDenumire().compareTo(o2.getDenumire());
+                else
+                    return (-1) * o1.getCategorie().compareTo(o2.getCategorie());
+            }
+        });
+        for (int i = 0; i < list_produse.size(); ++i) {
+            if (! new Double (list_produse.get(i).getPret()).equals(new Double(0))) {
+                model_produse.addElement("Nume: " + list_produse.get(i).getDenumire());
+                model_produse.addElement("Categorie: " + list_produse.get(i).getCategorie());
+                model_produse.addElement("Tara origine: " + list_produse.get(i).getTaraOrigine());
+                model_produse.addElement("Pret: " + list_produse.get(i).getPret());
+                model_produse.addElement("\n");
+            }
+        }
+        JPanel minipanel1 = new JPanel();
+        minipanel1.setLayout(new BoxLayout(minipanel1, BoxLayout.Y_AXIS));
+        String[] options = {"Dupa denumire", "Dupa tara"};
+        JLabel criteriu = new JLabel("Alege criteriul de sortare");
+        criteriu.setAlignmentX(JLabel.LEFT_ALIGNMENT);
+        JComboBox<String> list_options = new JComboBox<>(options);
+        list_options.setMaximumSize(new Dimension(100, 20));
+        list_options.setAlignmentX(JComboBox.LEFT_ALIGNMENT);
+        JButton sort = new JButton("Sorteaza");
+        sort.setAlignmentX(JButton.LEFT_ALIGNMENT);
+        sort.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JButton button = (JButton) e.getSource();
+                if (button.getText().equals(sort.getText())) {
+                    if (list_options.getSelectedItem().equals(list_options.getItemAt(0))) {
+                        Collections.sort(list_produse, new Comparator<Produs>() {
+                            @Override
+                            public int compare(Produs o1, Produs o2) {
+                                return o1.getDenumire().compareTo(o2.getDenumire());
+                            }
+                        });
+                        model_produse.removeAllElements();
+                        for (int i = 0; i < list_produse.size(); ++i) {
+                            if (! new Double (list_produse.get(i).getPret()).equals(new Double(0))) {
+                                model_produse.addElement("Nume: " + list_produse.get(i).getDenumire());
+                                model_produse.addElement("Categorie: " + list_produse.get(i).getCategorie());
+                                model_produse.addElement("Tara origine: " + list_produse.get(i).getTaraOrigine());
+                                model_produse.addElement("Pret: " + list_produse.get(i).getPret());
+                                model_produse.addElement("\n");
+                            }
+                        }
+                    } else {
+                        Collections.sort(list_produse, new Comparator<Produs>() {
+                            @Override
+                            public int compare(Produs o1, Produs o2) {
+                                return o1.getTaraOrigine().compareTo(o2.getTaraOrigine());
+                            }
+                        });
+                        model_produse.removeAllElements();
+                        for (int i = 0; i < list_produse.size(); ++i) {
+                            if (! new Double (list_produse.get(i).getPret()).equals(new Double(0))) {
+                                model_produse.addElement("Nume: " + list_produse.get(i).getDenumire());
+                                model_produse.addElement("Categorie: " + list_produse.get(i).getCategorie());
+                                model_produse.addElement("Tara origine: " + list_produse.get(i).getTaraOrigine());
+                                model_produse.addElement("Pret: " + list_produse.get(i).getPret());
+                                model_produse.addElement("\n");
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        JLabel check_if_prod_adaugat = new JLabel("");
+        JLabel check_if_prod_sters = new JLabel("");
+        JLabel text1 = new JLabel ("Adauga numele produsului:");
+        JLabel text2 = new JLabel ("Adauga pretul produsului:");
+        JComboBox<String> alege_categoria = new JComboBox<>(new Vector<>(parsing.categoriiProduse));
+        JComboBox<String> alege_tara = new JComboBox<>(new Vector<>(parsing.tariOrigine));
+        JTextField alege_produs = new JTextField(20);
+        JTextField alege_pret = new JTextField(15);
+        JButton adauga = new JButton("Adauga produs");
+        JButton sterge = new JButton("Sterge produs");
+        JButton editeaza = new JButton("Editeaza produs");
+        JButton cauta = new JButton("Cauta produs");
+        JPanel add_produs = new JPanel(); // panelul pentru adaugarea de produs
+        add_produs.setLayout(new BoxLayout(add_produs, BoxLayout.PAGE_AXIS));
+        JPanel first_line_add = new JPanel();
+        JPanel second_line_add = new JPanel();
+        first_line_add.setLayout(new BoxLayout(first_line_add, BoxLayout.PAGE_AXIS));
+        second_line_add.setLayout(new BoxLayout(second_line_add, BoxLayout.PAGE_AXIS));
+        first_line_add.add(text1);
+        first_line_add.add(Box.createRigidArea(new Dimension(5,10)));
+        first_line_add.add(alege_produs);
+        second_line_add.add(text2);
+        second_line_add.add(Box.createRigidArea(new Dimension(5,10)));
+        second_line_add.add(alege_pret);
+        add_produs.setMaximumSize(new Dimension(150, 150));
+        add_produs.add(first_line_add);
+        add_produs.add(Box.createRigidArea(new Dimension(2,5)));
+        add_produs.add(alege_categoria);
+        add_produs.add(Box.createRigidArea(new Dimension(2,5)));
+        add_produs.add(second_line_add);
+        add_produs.add(Box.createRigidArea(new Dimension(2,5)));
+        add_produs.add(alege_tara);
+        add_produs.add(Box.createRigidArea(new Dimension(2,5)));
+        add_produs.setAlignmentX(JPanel.LEFT_ALIGNMENT);
+
+        adauga.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JButton button = (JButton) e.getSource();
+                if (button.getText().equals(adauga.getText())) {
+                    String denumire_produs = alege_produs.getText();
+                    String categorie_produs = (String) alege_categoria.getSelectedItem();
+                    String tara_produs = (String) alege_tara.getSelectedItem();
+                    double pret_produs = Double.parseDouble(alege_pret.getText());
+                }
+            }
+        });
+
+        minipanel1.add(criteriu);
+        minipanel1.add(Box.createRigidArea(new Dimension(5,10)));
+        minipanel1.add(list_options);
+        minipanel1.add(Box.createRigidArea(new Dimension(5,10)));
+        minipanel1.add(sort);
+        minipanel1.add(Box.createRigidArea(new Dimension(5,10)));
+        minipanel1.add(add_produs);
+        minipanel1.add(Box.createRigidArea(new Dimension(5,10)));
+        minipanel1.add(adauga);
+        minipanel1.add(Box.createRigidArea(new Dimension(5,10)));
+        minipanel1.add(check_if_prod_adaugat);
+        minipanel1.add(Box.createRigidArea(new Dimension(5,10)));
+        minipanel1.add(sterge);
+        minipanel1.add(Box.createRigidArea(new Dimension(5,10)));
+        minipanel1.add(check_if_prod_sters);
+        minipanel1.add(Box.createRigidArea(new Dimension(5,10)));
+        minipanel1.add(cauta);
+        minipanel1.add(Box.createRigidArea(new Dimension(5,10)));
+        minipanel1.add(editeaza);
+        panel3.add(Box.createRigidArea(new Dimension(10,10)));
+        panel3.add(scrolling);
+        panel3.add(Box.createRigidArea(new Dimension(50,10)));
+        panel3.add(minipanel1);
+
         TreeSet<String> countries = parsing.tariOrigine;
         TreeSet<String> categorii_produse = parsing.categoriiProduse;
-
         DefaultListModel<String> model1 = new DefaultListModel<>();
         JList<String> list_countries = new JList<>(model1);
         list_countries.setVisibleRowCount(15);
@@ -388,7 +551,32 @@ public class WelcomePage extends JFrame {
             model2.addElement("Totalul cu taxe scutite: " + df.format(magazin_categorie.getTotalCuTaxeScutite()).replaceAll(",", "."));
             model2.addElement("\n\n");
         }
+        list1.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println(list1.getSelectedValue());
+            }
 
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
         panel4.add(Box.createRigidArea(new Dimension(10,10)));
         panel4.add(box_panel1);
         panel4.add(Box.createRigidArea(new Dimension(10,10)));
@@ -400,7 +588,7 @@ public class WelcomePage extends JFrame {
         this.tabs.setFont(new Font( "Georgia", Font.PLAIN, 14 ));
         this.tabs.add("  User Info  ", info1);
         this.tabs.add("  Load Files  ", panel2);
-        this.tabs.add("  Products  ", new JPanel());
+        this.tabs.add("  Products  ", panel3);
         this.tabs.add("  Statistics  ", panel4);
 
         if (!checkFiles())

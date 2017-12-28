@@ -1,6 +1,6 @@
 package tax_system;
 
-public class Produs implements Comparable<Produs>{
+public class Produs{
     private String denumire, categorie, taraOrigine;
     private double pret;
 
@@ -44,16 +44,11 @@ public class Produs implements Comparable<Produs>{
         this.taraOrigine = taraOrigine;
     }
 
-    public int compareTo (Produs prod) {
-        if (this.getCategorie().equals(prod.getCategorie()))
-            return this.getDenumire().compareTo(prod.getDenumire());
-        else
-            return this.getCategorie().compareTo(prod.getCategorie());
-    }
-
     public String toString () {
         String result = "Nume: " + this.denumire + "\n" + "Categorie: " + this.categorie + "\n";
         result += "Pret: " + this.pret + "\nTara origine: " + this.taraOrigine + "\n\n";
+        if (new Double (this.pret).equals(new Double(0)))
+            result = "";
         return result;
     }
 

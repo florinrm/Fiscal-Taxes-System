@@ -5,17 +5,55 @@ import java.util.*;
 
 public class Main {
 
+    public double findPret (Vector<Produs> list, String nume, String taraOrigine, String categorie) {
+        for (int i = 0; i < list.size(); ++i) {
+            if (nume.equals(list.get(i).getDenumire())
+                    && categorie.equals(list.get(i).getCategorie())
+                    && taraOrigine.equals(list.get(i).getTaraOrigine()))
+                return list.get(i).getPret();
+        }
+        return 0;
+    }
+
     public Main () {
         FileParsing parsing = new FileParsing();
         Vector <Produs> list = parsing.getListProdus("produse.txt");
         HashMap <String, HashMap<String, Double>> map = parsing.getTaxe1("taxe.txt");
         ArrayList <Magazin> list3 = parsing.getMagazine("facturi.txt", list, map);
         TreeSet<String> tipuriMagazine = parsing.tipuriMagazine;
-
-        Collections.sort(list);
-        for (int i = 0; i < list.size(); ++i)
-            System.out.println(list.get(i));
-
+        ArrayList<String> countries = new ArrayList<>(parsing.tariOrigine); /*
+        try {
+            System.setOut(new PrintStream(new File("testing.txt")));
+            System.out.print("Produs Categorie ");
+            int no_countries = countries.size();
+            for (int i = 0; i < no_countries; ++i) {
+                if (i == no_countries - 1)
+                    System.out.print(countries.get(i) + "\n");
+                else
+                    System.out.print(countries.get(i) + " ");
+            }
+            Collections.sort(list, new Comparator<Produs>() {
+                @Override
+                public int compare(Produs o1, Produs o2) {
+                    if (o1.getCategorie().equals(o2.getCategorie()))
+                        return (-1) * o1.getDenumire().compareTo(o2.getDenumire());
+                    else
+                        return (-1) * o1.getCategorie().compareTo(o2.getCategorie());
+                }
+            });
+            for (int i = 0; i < list.size(); i = i + no_countries) {
+                System.out.print(list.get(i).getDenumire() + " " + list.get(i).getCategorie() + " ");
+                for (int j = 0; j < no_countries; ++j) {
+                    if (j == no_countries - 1)
+                        System.out.print (findPret(list, list.get(i).getDenumire(), countries.get(j), list.get(i).getCategorie()) + "\n");
+                    else
+                        System.out.print (findPret(list, list.get(i).getDenumire(), countries.get(j), list.get(i).getCategorie()) + " ");
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        */
         Gestiune obj = Gestiune.getInstance();
         obj.setMagazine(list3);
         obj.setProduse(list);
