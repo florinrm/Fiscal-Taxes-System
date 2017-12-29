@@ -8,7 +8,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -82,6 +84,7 @@ public class WelcomePage extends JFrame {
         return result;
     }
 
+    // daca exista produsul (un produs cu pret 0 la o tara = produs inexistent)
     public boolean checkProdus (Vector<Produs> list, String denumire, String categorie, String tara) {
         for (int i = 0; i < list.size(); ++i) {
             if (denumire.equals(list.get(i).getDenumire())
@@ -96,11 +99,62 @@ public class WelcomePage extends JFrame {
         return false;
     }
 
+    public double findPret (Vector<Produs> list, String nume, String taraOrigine, String categorie) {
+        for (int i = 0; i < list.size(); ++i) {
+            if (nume.equals(list.get(i).getDenumire())
+                    && categorie.equals(list.get(i).getCategorie())
+                    && taraOrigine.equals(list.get(i).getTaraOrigine()))
+                return list.get(i).getPret();
+        }
+        return 0;
+    }
+
+    public void updateProduseFile (Vector<Produs> list, TreeSet<String> lista_tari) {
+        ArrayList<String> countries = new ArrayList<>(lista_tari);
+        try {
+            System.setOut(new PrintStream(new File("produse1.txt")));
+            System.out.print("Produs Categorie ");
+            int no_countries = countries.size();
+            for (int i = 0; i < no_countries; ++i) {
+                if (i == no_countries - 1)
+                    System.out.print(countries.get(i) + "\n");
+                else
+                    System.out.print(countries.get(i) + " ");
+            }
+            Collections.sort(list, new Comparator<Produs>() {
+                @Override
+                public int compare(Produs o1, Produs o2) {
+                    if (o1.getCategorie().equals(o2.getCategorie()))
+                        return (-1) * o1.getDenumire().compareTo(o2.getDenumire());
+                    else
+                        return (-1) * o1.getCategorie().compareTo(o2.getCategorie());
+                }
+            });
+            for (int i = 0; i < list.size(); i = i + no_countries) {
+                System.out.print(list.get(i).getDenumire() + " " + list.get(i).getCategorie() + " ");
+                for (int j = 0; j < no_countries; ++j) {
+                    if (j == no_countries - 1)
+                    {
+                        if (i == list.size() - 1)
+                            System.out.print (findPret(list, list.get(i).getDenumire(), countries.get(j), list.get(i).getCategorie()));
+                        else
+                            System.out.print (findPret(list, list.get(i).getDenumire(), countries.get(j), list.get(i).getCategorie()) + "\n");
+                    }
+                    else
+                        System.out.print (findPret(list, list.get(i).getDenumire(), countries.get(j), list.get(i).getCategorie()) + " ");
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        System.setOut(System.out);
+    }
+
     public WelcomePage (String username) {
         super ("Application Home");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setBackground(Color.BLUE);
-        this.setMinimumSize(new Dimension(700, 500));
+        this.setMinimumSize(new Dimension(700, 700));
         this.getContentPane().setLayout(new BorderLayout(10, 10));
         ImageIcon icon = new ImageIcon("Desktop-icon.png");
         this.setIconImage(icon.getImage());
@@ -159,6 +213,7 @@ public class WelcomePage extends JFrame {
                         file.delete();
                         info.setText("produse.txt deleted");
                         tabs.setEnabledAt(3, false);
+                        tabs.setEnabledAt(2, false);
                     }
                 }
             }
@@ -219,6 +274,9 @@ public class WelcomePage extends JFrame {
                         }
                         if (!tabs.isEnabledAt(3) && checkFiles())
                             tabs.setEnabledAt(3, true);
+                        File produs_file = new File ("produse.txt");
+                        if (produs_file.exists() && !tabs.isEnabledAt(2))
+                            tabs.setEnabledAt(2, true);
                     }
                 }
             }
@@ -245,8 +303,9 @@ public class WelcomePage extends JFrame {
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     }
-                    if (!tabs.isEnabledAt(3) && checkFiles())
+                    if (!tabs.isEnabledAt(3) && checkFiles()) {
                         tabs.setEnabledAt(3, true);
+                    }
                 }
             }
         });
@@ -312,7 +371,7 @@ public class WelcomePage extends JFrame {
 
 
         FileParsing parsing = new FileParsing();
-        Vector<Produs> list_produse = parsing.getListProdus("produse.txt");
+        final Vector<Produs> list_produse = parsing.getListProdus("produse.txt");
         HashMap <String, HashMap<String, Double>> map = parsing.getTaxe1("taxe.txt");
         ArrayList <Magazin> list_magazine = parsing.getMagazine("facturi.txt", list_produse, map);
         DecimalFormat df = new DecimalFormat("#.####");
@@ -367,7 +426,7 @@ public class WelcomePage extends JFrame {
         list1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         panel3.setLayout(new BoxLayout(panel3, BoxLayout.X_AXIS));
         JScrollPane scrolling = new JScrollPane(list1);
-        scrolling.setMaximumSize(new Dimension(150, 500));
+        scrolling.setMaximumSize(new Dimension(150, 700));
         scrolling.setVerticalScrollBar(new JScrollBar(JScrollBar.VERTICAL));
         Collections.sort(list_produse, new Comparator<Produs>() {
             @Override
@@ -483,7 +542,150 @@ public class WelcomePage extends JFrame {
                     String denumire_produs = alege_produs.getText();
                     String categorie_produs = (String) alege_categoria.getSelectedItem();
                     String tara_produs = (String) alege_tara.getSelectedItem();
-                    double pret_produs = Double.parseDouble(alege_pret.getText());
+                    String pret_produs_text = alege_pret.getText();
+                    if (denumire_produs.length() == 0 || pret_produs_text.length() == 0) {
+                        check_if_prod_adaugat.setText("Completati toate campurile!");
+                    } else {
+                        double pret_produs = Double.parseDouble(pret_produs_text);
+                        System.out.println(denumire_produs + " " + categorie_produs + " " + tara_produs + " " + pret_produs);
+                        if (! checkProdus(list_produse, denumire_produs, categorie_produs, tara_produs)) {
+                            list_produse.remove (new Produs(denumire_produs, categorie_produs, tara_produs, 0));
+                            list_produse.add(new Produs(denumire_produs, categorie_produs, tara_produs, pret_produs));
+                            ArrayList<String> countries = new ArrayList<>(parsing.tariOrigine);
+                            for (int i = 0; i < list_produse.size(); ++i) {
+                                if (denumire_produs.equals(list_produse.get(i).getDenumire())
+                                        && categorie_produs.equals(list_produse.get(i).getCategorie())
+                                        && ! new Double (list_produse.get(i).getPret()).equals(new Double(0)))
+                                    countries.remove(list_produse.get(i).getTaraOrigine());
+                            }
+                            for (int i = 0; i < countries.size(); ++i)
+                                list_produse.add(new Produs (denumire_produs, categorie_produs, countries.get(i), 0));
+                            System.out.println(countries.size());
+                            updateProduseFile(list_produse, parsing.tariOrigine);
+                            check_if_prod_adaugat.setText("Produs adaugat!");
+                        } else {
+                            check_if_prod_adaugat.setText("Produsul deja exista!");
+                        }
+                    }
+                }
+            }
+        });
+
+        sterge.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JButton button = (JButton) e.getSource();
+                if (button.getText().equals(sterge.getText())) {
+                    String denumire_produs = alege_produs.getText();
+                    String categorie_produs = (String) alege_categoria.getSelectedItem();
+                    String tara_produs = (String) alege_tara.getSelectedItem();
+                    // double pret_produs = Double.parseDouble(alege_pret.getText());
+                    if (denumire_produs.length() == 0 || categorie_produs.length() == 0
+                            || tara_produs.length() == 0) {
+                        check_if_prod_sters.setText("Completati toate campurile!");
+                    } else {
+                        Vector<Produs> to_be_deleted = new Vector<>();
+                        if (checkProdus(list_produse, denumire_produs, categorie_produs, tara_produs)) {
+                            for (int i = 0; i < list_produse.size(); ++i) {
+                                if (denumire_produs.equals(list_produse.get(i).getDenumire())
+                                        && categorie_produs.equals(list_produse.get(i).getCategorie())) {
+                                    if (tara_produs.equals(list_produse.get(i).getTaraOrigine())) {
+                                        if (new Double (list_produse.get(i).getPret()).equals(new Double(0)))
+                                            check_if_prod_sters.setText("Produsul a fost deja sters");
+                                        else {
+                                            list_produse.get(i).setPret(0);
+                                            to_be_deleted.add(list_produse.get(i));
+                                            check_if_prod_sters.setText("Produsul a fost sters");
+                                        }
+                                    } else {
+                                        if (new Double (list_produse.get(i).getPret()).equals(new Double(0)))
+                                            to_be_deleted.add(list_produse.get(i));
+                                    }
+                                }
+                            }
+                            if (to_be_deleted.size() == parsing.tariOrigine.size())
+                                list_produse.removeAll(to_be_deleted);
+                            updateProduseFile(list_produse, parsing.tariOrigine);
+                            // check_if_prod_sters.setText("Produsul a fost sters");
+                        } else {
+                            check_if_prod_sters.setText("Produsul nu exista!");
+                        }
+                    }
+                }
+            }
+        });
+        JLabel check_if_produs_exista = new JLabel();
+        cauta.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JButton button = (JButton) e.getSource();
+                if (button.getText().equals(cauta.getText())) {
+                    String denumire_produs = alege_produs.getText();
+                    String categorie_produs = (String) alege_categoria.getSelectedItem();
+                    String tara_produs = (String) alege_tara.getSelectedItem();
+                    // System.out.println("leeel");
+                    if (denumire_produs.length() == 0)
+                        check_if_produs_exista.setText("Completati campul de denumire!");
+                    if (checkProdus(list_produse, denumire_produs, categorie_produs, tara_produs)) {
+                        check_if_produs_exista.setText("Produsul e in baza de date");
+                    } else {
+                        check_if_produs_exista.setText("Produsul nu exista!");
+                    }
+                }
+            }
+        });
+        JPanel editare_produs = new JPanel();
+        editare_produs.setMaximumSize(new Dimension(170, 70));
+        JLabel text3 = new JLabel ("Adauga numele nou al produsului:");
+        JLabel text4 = new JLabel ("Adauga pretul nou al produsului:");
+        JTextField editare_nume = new JTextField(20);
+        JTextField editare_pret = new JTextField(15);
+        editare_produs.setLayout(new BoxLayout(editare_produs, BoxLayout.PAGE_AXIS));
+        JPanel first_line_edit = new JPanel();
+        JPanel second_line_edit = new JPanel();
+        first_line_edit.setLayout(new BoxLayout(first_line_edit, BoxLayout.PAGE_AXIS));
+        second_line_edit.setLayout(new BoxLayout(second_line_edit, BoxLayout.PAGE_AXIS));
+        first_line_edit.add(text3);
+        first_line_edit.add(Box.createRigidArea(new Dimension(5,2)));
+        first_line_edit.add(editare_nume);
+        second_line_edit.add(text4);
+        second_line_edit.add(Box.createRigidArea(new Dimension(5,2)));
+        second_line_edit.add(editare_pret);
+        editare_produs.add(first_line_edit);
+        editare_produs.add(second_line_edit);
+
+        JLabel edit_result = new JLabel();
+        editeaza.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JButton button = (JButton) e.getSource();
+                if (button.getText().equals(editeaza.getText())) {
+                    String original_denumire = alege_produs.getText();
+                    String final_denumire = editare_nume.getText();
+                    String final_pret = editare_pret.getText();
+                    String tara = (String) alege_tara.getSelectedItem();
+                    String categorie = (String) alege_categoria.getSelectedItem();
+                    double first_price = findPret(list_produse, original_denumire, tara, categorie);
+                    if (original_denumire.length() == 0 || final_denumire.length() == 0 || final_pret.length() == 0) {
+                        edit_result.setText("Completati toate campurile");
+                    } else {
+                        if (checkProdus(list_produse, original_denumire, categorie, tara)) {
+                            double final_price = Double.parseDouble(final_pret);
+                            boolean yes = false;
+                            for (int i = 0; i < list_produse.size(); ++i) {
+                                if (original_denumire.equals(list_produse.get(i).getDenumire())
+                                        && categorie.equals(list_produse.get(i).getCategorie())) {
+                                    list_produse.get(i).setDenumire(final_denumire);
+                                    if (tara.equals(list_produse.get(i).getTaraOrigine()))
+                                        list_produse.get(i).setPret(final_price);
+                                    edit_result.setText("Produsul a fost editat!");
+                                    updateProduseFile(list_produse, parsing.tariOrigine);
+                                }
+                            }
+                        } else {
+                            edit_result.setText("Produsul nu exista!");
+                        }
+                    }
                 }
             }
         });
@@ -506,7 +708,13 @@ public class WelcomePage extends JFrame {
         minipanel1.add(Box.createRigidArea(new Dimension(5,10)));
         minipanel1.add(cauta);
         minipanel1.add(Box.createRigidArea(new Dimension(5,10)));
+        minipanel1.add(check_if_produs_exista);
+        minipanel1.add(Box.createRigidArea(new Dimension(5,10)));
+        minipanel1.add(editare_produs);
+        minipanel1.add(Box.createRigidArea(new Dimension(5,10)));
         minipanel1.add(editeaza);
+        minipanel1.add(Box.createRigidArea(new Dimension(5,10)));
+        minipanel1.add(edit_result);
         panel3.add(Box.createRigidArea(new Dimension(10,10)));
         panel3.add(scrolling);
         panel3.add(Box.createRigidArea(new Dimension(50,10)));
@@ -542,7 +750,7 @@ public class WelcomePage extends JFrame {
         Iterator iterator2 = categorii_produse.iterator();
         while (iterator2.hasNext()) {
             String categorie = iterator2.next().toString();
-            System.out.println(categorie);
+            // System.out.println(categorie);
             Magazin magazin_categorie = getMagazinMaxCategorie(list_magazine, categorie);
             model2.addElement("Magazinul cu cele mai mari vanzari in " + categorie);
             model2.addElement("Nume: " + magazin_categorie.nume);
@@ -551,32 +759,7 @@ public class WelcomePage extends JFrame {
             model2.addElement("Totalul cu taxe scutite: " + df.format(magazin_categorie.getTotalCuTaxeScutite()).replaceAll(",", "."));
             model2.addElement("\n\n");
         }
-        list1.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println(list1.getSelectedValue());
-            }
 
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
-        });
         panel4.add(Box.createRigidArea(new Dimension(10,10)));
         panel4.add(box_panel1);
         panel4.add(Box.createRigidArea(new Dimension(10,10)));
@@ -593,6 +776,9 @@ public class WelcomePage extends JFrame {
 
         if (!checkFiles())
             this.tabs.setEnabledAt(3, false);
+        File fisier_prod = new File ("produse.txt");
+        if (!fisier_prod.exists())
+            this.tabs.setEnabledAt(2, false);
 
         this.info2 = new JPanel();
         info2.setLayout(new BoxLayout(this.info2, BoxLayout.X_AXIS));

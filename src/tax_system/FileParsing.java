@@ -45,9 +45,12 @@ public class FileParsing {
 
     public HashMap<String, HashMap<String, Double>> getTaxe1 (String filename) {
         HashMap<String, HashMap<String, Double>> map = new HashMap<>();
+        File file = new File(filename);
+        if (!file.exists())
+            return null;
         Scanner scan = null;
         try {
-            scan = new Scanner(new File(filename));
+            scan = new Scanner(file);
             String first_line = scan.nextLine();
             String [] data = first_line.split(" ");
             ArrayList <String> countries = new ArrayList <>();
@@ -100,9 +103,12 @@ public class FileParsing {
     // Parsing produse.txt - lista de obiecte de tip Produs
     public Vector<Produs> getListProdus (String filename) {
         Vector <Produs> list = new Vector <> ();
+        File file = new File(filename);
+        if (!file.exists())
+            return null;
         Scanner scan = null;
         try {
-            scan = new Scanner (new File(filename));
+            scan = new Scanner (file);
             String first_line = scan.nextLine();
             String [] data = first_line.split(" ");
             ArrayList <String> countries = new ArrayList <>();
@@ -128,9 +134,12 @@ public class FileParsing {
     // Parsing facturi.txt - lista de magazine
     public ArrayList <Magazin> getMagazine (String filename, List<Produs> produse, HashMap<String, HashMap<String, Double>> taxe) {
         ArrayList <Magazin> list = new ArrayList<>();
+        File file = new File(filename);
+        if (!file.exists())
+            return null;
         Scanner scan = null;
         try {
-            scan = new Scanner (new File (filename));
+            scan = new Scanner (file);
             int count = 0;
             HashMap<Integer, ShopType> map = new HashMap<>(); // count + magazin
             HashMap<Integer, Vector<Factura>> map2 = new HashMap<>(); // count + vector factura
@@ -198,9 +207,5 @@ public class FileParsing {
                 return list.get(i).getPret();
         }
         return 0;
-    }
-
-    public void writeFileProduse (List<Produs> list_produse) {
-
     }
 }
