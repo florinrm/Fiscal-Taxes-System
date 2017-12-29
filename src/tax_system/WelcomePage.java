@@ -112,7 +112,7 @@ public class WelcomePage extends JFrame {
     public void updateProduseFile (Vector<Produs> list, TreeSet<String> lista_tari) {
         ArrayList<String> countries = new ArrayList<>(lista_tari);
         try {
-            System.setOut(new PrintStream(new File("produse1.txt")));
+            System.setOut(new PrintStream(new File("produse.txt")));
             System.out.print("Produs Categorie ");
             int no_countries = countries.size();
             for (int i = 0; i < no_countries; ++i) {
@@ -256,7 +256,7 @@ public class WelcomePage extends JFrame {
                 JButton button = (JButton) e.getSource();
                 if (button.getText().equals(produs.getText()))
                 {
-                    if (! new File ("produse.txt").exists()) {
+                    if (!new File ("produse.txt").exists()) {
                         produs_file.setDialogTitle("Alege produsele");
                         produs_file.setCurrentDirectory(new File("C:\\"));
                         produs_file.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -277,6 +277,8 @@ public class WelcomePage extends JFrame {
                         File produs_file = new File ("produse.txt");
                         if (produs_file.exists() && !tabs.isEnabledAt(2))
                             tabs.setEnabledAt(2, true);
+                    } else {
+                        info.setText("Fisierul produse.txt deja exista!");
                     }
                 }
             }
@@ -287,25 +289,28 @@ public class WelcomePage extends JFrame {
                 JButton button = (JButton) e.getSource();
                 if (button.getText().equals(taxe.getText()))
                 {
-                    new File ("taxe.txt").delete();
-                    taxe_file.setDialogTitle("Alege taxele");
-                    taxe_file.setCurrentDirectory(new File("C:\\"));
-                    taxe_file.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                    taxe_file.showOpenDialog(null);
-                    File file = taxe_file.getSelectedFile();
-                    while (file == null) {
-                        info.setText("Choose a file!");
+                    if (!new File ("taxe.txt").exists()) {
+                        taxe_file.setDialogTitle("Alege taxele");
+                        taxe_file.setCurrentDirectory(new File("C:\\"));
+                        taxe_file.setFileSelectionMode(JFileChooser.FILES_ONLY);
                         taxe_file.showOpenDialog(null);
-                        file = taxe_file.getSelectedFile();
+                        File file = taxe_file.getSelectedFile();
+                        while (file == null) {
+                            info.setText("Choose a file!");
+                            taxe_file.showOpenDialog(null);
+                            file = taxe_file.getSelectedFile();
+                        }
+                        try {
+                            Files.copy(file.toPath(), new File ("taxe.txt").toPath());
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        }
+                        if (!tabs.isEnabledAt(3) && checkFiles()) {
+                            tabs.setEnabledAt(3, true);
+                        }
                     }
-                    try {
-                        Files.copy(file.toPath(), new File ("taxe.txt").toPath());
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
-                    if (!tabs.isEnabledAt(3) && checkFiles()) {
-                        tabs.setEnabledAt(3, true);
-                    }
+                } else {
+                    info.setText("Fisierul taxe.txt deja exista!");
                 }
             }
         });
@@ -315,23 +320,27 @@ public class WelcomePage extends JFrame {
                 JButton button = (JButton) e.getSource();
                 if (button.getText().equals(facturi.getText()))
                 {
-                    facturi_file.setDialogTitle("Alege facturile");
-                    facturi_file.setCurrentDirectory(new File("C:\\"));
-                    facturi_file.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                    facturi_file.showOpenDialog(null);
-                    File file = facturi_file.getSelectedFile();
-                    while (file == null) {
-                        info.setText("Choose a file!");
-                        taxe_file.showOpenDialog(null);
-                        file = taxe_file.getSelectedFile();
+                    if (!new File("facturi.txt").exists()) {
+                        facturi_file.setDialogTitle("Alege facturile");
+                        facturi_file.setCurrentDirectory(new File("C:\\"));
+                        facturi_file.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                        facturi_file.showOpenDialog(null);
+                        File file = facturi_file.getSelectedFile();
+                        while (file == null) {
+                            info.setText("Choose a file!");
+                            taxe_file.showOpenDialog(null);
+                            file = taxe_file.getSelectedFile();
+                        }
+                        try {
+                            Files.copy(file.toPath(), new File ("facturi.txt").toPath());
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        }
+                        if (!tabs.isEnabledAt(3) && checkFiles())
+                            tabs.setEnabledAt(3, true);
                     }
-                    try {
-                        Files.copy(file.toPath(), new File ("facturi.txt").toPath());
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
-                    if (!tabs.isEnabledAt(3) && checkFiles())
-                        tabs.setEnabledAt(3, true);
+                } else {
+                    info.setText("Fisierul facturi.txt deja exista!");
                 }
             }
         });
@@ -371,7 +380,7 @@ public class WelcomePage extends JFrame {
 
 
         FileParsing parsing = new FileParsing();
-        final Vector<Produs> list_produse = parsing.getListProdus("produse1.txt");
+        final Vector<Produs> list_produse = parsing.getListProdus("produse.txt");
         HashMap <String, HashMap<String, Double>> map = parsing.getTaxe1("taxe.txt");
         ArrayList <Magazin> list_magazine = parsing.getMagazine("facturi.txt", list_produse, map);
         DecimalFormat df = new DecimalFormat("#.####");
@@ -588,6 +597,16 @@ public class WelcomePage extends JFrame {
                                         list_produse.add(new Produs(denumire_produs, categorie_produs, add_country, 0));
                                 }
                             }
+                            model_produse.removeAllElements();
+                            for (int i = 0; i < list_produse.size(); ++i) {
+                                if (! new Double (list_produse.get(i).getPret()).equals(new Double(0))) {
+                                    model_produse.addElement("Nume: " + list_produse.get(i).getDenumire());
+                                    model_produse.addElement("Categorie: " + list_produse.get(i).getCategorie());
+                                    model_produse.addElement("Tara origine: " + list_produse.get(i).getTaraOrigine());
+                                    model_produse.addElement("Pret: " + list_produse.get(i).getPret());
+                                    model_produse.addElement("\n");
+                                }
+                            }
                             updateProduseFile(list_produse, parsing.tariOrigine);
                         } else {
                             check_if_prod_adaugat.setText("Produsul deja exista!");
@@ -632,7 +651,16 @@ public class WelcomePage extends JFrame {
                             if (to_be_deleted.size() == parsing.tariOrigine.size())
                                 list_produse.removeAll(to_be_deleted);
                             updateProduseFile(list_produse, parsing.tariOrigine);
-                            // check_if_prod_sters.setText("Produsul a fost sters");
+                            model_produse.removeAllElements();
+                            for (int i = 0; i < list_produse.size(); ++i) {
+                                if (! new Double (list_produse.get(i).getPret()).equals(new Double(0))) {
+                                    model_produse.addElement("Nume: " + list_produse.get(i).getDenumire());
+                                    model_produse.addElement("Categorie: " + list_produse.get(i).getCategorie());
+                                    model_produse.addElement("Tara origine: " + list_produse.get(i).getTaraOrigine());
+                                    model_produse.addElement("Pret: " + list_produse.get(i).getPret());
+                                    model_produse.addElement("\n");
+                                }
+                            }
                         } else {
                             check_if_prod_sters.setText("Produsul nu exista!");
                         }
@@ -708,6 +736,16 @@ public class WelcomePage extends JFrame {
                                         list_produse.get(i).setPret(final_price);
                                     edit_result.setText("Produsul a fost editat!");
                                     updateProduseFile(list_produse, parsing.tariOrigine);
+                                }
+                            }
+                            model_produse.removeAllElements();
+                            for (int i = 0; i < list_produse.size(); ++i) {
+                                if (! new Double (list_produse.get(i).getPret()).equals(new Double(0))) {
+                                    model_produse.addElement("Nume: " + list_produse.get(i).getDenumire());
+                                    model_produse.addElement("Categorie: " + list_produse.get(i).getCategorie());
+                                    model_produse.addElement("Tara origine: " + list_produse.get(i).getTaraOrigine());
+                                    model_produse.addElement("Pret: " + list_produse.get(i).getPret());
+                                    model_produse.addElement("\n");
                                 }
                             }
                         } else {

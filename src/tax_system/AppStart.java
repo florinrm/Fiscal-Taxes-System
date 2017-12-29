@@ -32,6 +32,11 @@ public class AppStart extends JFrame {
     private JButton create_account;
     private JPanel buttons_panel;
 
+    public String encypherPassword (String password) {
+        String result = "";
+        return result;
+    }
+
     public void insert_data (String username, String password) {
         File data_file = new File("login.txt");
         HashMap <String, String> map = new HashMap<>();
@@ -84,7 +89,10 @@ public class AppStart extends JFrame {
                 if (username.equals(data[0])) {
                     if (password.equals(data[1])) {
                         succeded.setText("Logged in succesfully!");
-                        new WelcomePage(data[0]);
+                        if (checkFiles())
+                            new WelcomePage(data[0]);
+                        else
+                            new UploadFiles(data[0]);
                         setVisible(false); //you can't see me!
                         dispose();
                         return;
@@ -99,6 +107,21 @@ public class AppStart extends JFrame {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean checkFiles () {
+        File folder = new File (".");
+        File[] files = folder.listFiles();
+        int count = 0;
+        for (File fisier: files) {
+            if (fisier.getAbsolutePath().contains("facturi.txt"))
+                count++;
+            if (fisier.getAbsolutePath().contains("taxe.txt"))
+                count++;
+            if (fisier.getAbsolutePath().contains("produse.txt"))
+                count++;
+        }
+        return (count == 3);
     }
 
     public AppStart () {
