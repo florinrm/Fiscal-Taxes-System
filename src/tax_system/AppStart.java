@@ -17,6 +17,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -32,9 +34,25 @@ public class AppStart extends JFrame {
     private JButton create_account;
     private JPanel buttons_panel;
 
+    // criptez parolele in login.txt
     public String encypherPassword (String password) {
-        String result = "";
-        return result;
+        String cypher = "";
+        MessageDigest digest;
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(password.getBytes("UTF-8"));
+            StringBuffer hexString = new StringBuffer();
+
+            for (int i = 0; i < hash.length; i++) {
+                String hex = Integer.toHexString(0xff & hash[i]);
+                if(hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
+            }
+            cypher = hexString.toString().toUpperCase();
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return cypher;
     }
 
     public void insert_data (String username, String password) {
@@ -47,6 +65,7 @@ public class AppStart extends JFrame {
                 e.printStackTrace();
             }
         Scanner scan = null;
+        password = encypherPassword(password);
         try {
             scan = new Scanner(data_file);
             String line;
@@ -79,6 +98,7 @@ public class AppStart extends JFrame {
             succeded.setText("Account doesn't exist!");
             return;
         }
+        password = encypherPassword(password);
         Scanner scan = null;
         try {
             scan = new Scanner (data_file);

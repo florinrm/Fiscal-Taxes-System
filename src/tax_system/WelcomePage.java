@@ -378,13 +378,11 @@ public class WelcomePage extends JFrame {
         panel2.add(Box.createRigidArea(new Dimension(5,10)));
         panel2.add(info);
 
-
         FileParsing parsing = new FileParsing();
         final Vector<Produs> list_produse = parsing.getListProdus("produse.txt");
         HashMap <String, HashMap<String, Double>> map = parsing.getTaxe1("taxe.txt");
         ArrayList <Magazin> list_magazine = parsing.getMagazine("facturi.txt", list_produse, map);
         DecimalFormat df = new DecimalFormat("#.####");
-
 
         JPanel panel4 = new JPanel();
         panel4.setLayout(new BoxLayout(panel4, BoxLayout.X_AXIS));
@@ -392,8 +390,8 @@ public class WelcomePage extends JFrame {
         box_panel1.setLayout(new BoxLayout(box_panel1, BoxLayout.Y_AXIS));
         JPanel box_panel2 = new JPanel();
         box_panel2.setLayout(new BoxLayout(box_panel1, BoxLayout.Y_AXIS));
-        Magazin maximum_maga = getMagazinMaximum(list_magazine);
 
+        Magazin maximum_maga = getMagazinMaximum(list_magazine);
         JLabel header1 = new JLabel("Magazinul cu cele mai mari vanzari");
         JLabel nume_magazin1 = new JLabel("Nume: " + maximum_maga.nume);
         JLabel total_fara_taxe1 = new JLabel("Totalul fara taxe: " + df.format(maximum_maga.getTotalFaraTaxe()).replaceAll(",", "."));
@@ -427,6 +425,54 @@ public class WelcomePage extends JFrame {
         box_panel1.add(Box.createRigidArea(new Dimension(10,5)));
         box_panel1.add(total_cu_taxe_factura);
         box_panel1.add(Box.createRigidArea(new Dimension(10,5)));
+
+        TreeSet<String> countries = parsing.tariOrigine;
+        TreeSet<String> categorii_produse = parsing.categoriiProduse;
+
+        DefaultListModel<String> model1 = new DefaultListModel<>();
+        JList<String> list_countries = new JList<>(model1);
+        list_countries.setVisibleRowCount(15);
+        list_countries.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane scrolling_countries = new JScrollPane(list_countries);
+        scrolling_countries.setMaximumSize(new Dimension(200, 300));
+        scrolling_countries.setVerticalScrollBar(new JScrollBar(JScrollBar.VERTICAL));
+        Iterator iterator1 = countries.iterator();
+        while (iterator1.hasNext()) {
+            String country = iterator1.next().toString();
+            Magazin magazin_country = getMagazinMaxTara(list_magazine, country);
+            model1.addElement("Magazinul cu cele mai mari vanzari in " + country);
+            model1.addElement("Nume: " + maximum_maga.nume);
+            model1.addElement("Totalul fara taxe: " + df.format(magazin_country.getTotalFaraTaxe()).replaceAll(",", "."));
+            model1.addElement("Totalul cu taxe: " + df.format(magazin_country.getTotalCuTaxe()).replaceAll(",", "."));
+            model1.addElement("Totalul cu taxe scutite: " + df.format(magazin_country.getTotalCuTaxeScutite()).replaceAll(",", "."));
+            model1.addElement("\n\n");
+        }
+
+        DefaultListModel<String> model2 = new DefaultListModel<>();
+        JList<String> list_categorii = new JList<>(model2);
+        list_categorii.setVisibleRowCount(15);
+        list_categorii.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane scrolling_categorii = new JScrollPane(list_categorii);
+        scrolling_categorii.setMaximumSize(new Dimension(200, 300));
+        scrolling_categorii.setVerticalScrollBar(new JScrollBar(JScrollBar.VERTICAL));
+        Iterator iterator2 = categorii_produse.iterator();
+        while (iterator2.hasNext()) {
+            String categorie = iterator2.next().toString();
+            Magazin magazin_categorie = getMagazinMaxCategorie(list_magazine, categorie);
+            model2.addElement("Magazinul cu cele mai mari vanzari in " + categorie);
+            model2.addElement("Nume: " + magazin_categorie.nume);
+            model2.addElement("Totalul fara taxe: " + df.format(magazin_categorie.getTotalFaraTaxe()).replaceAll(",", "."));
+            model2.addElement("Totalul cu taxe: " + df.format(magazin_categorie.getTotalCuTaxe()).replaceAll(",", "."));
+            model2.addElement("Totalul cu taxe scutite: " + df.format(magazin_categorie.getTotalCuTaxeScutite()).replaceAll(",", "."));
+            model2.addElement("\n\n");
+        }
+
+        panel4.add(Box.createRigidArea(new Dimension(10,10)));
+        panel4.add(box_panel1);
+        panel4.add(Box.createRigidArea(new Dimension(10,10)));
+        panel4.add(scrolling_countries);
+        panel4.add(Box.createRigidArea(new Dimension(10,10)));
+        panel4.add(scrolling_categorii);
 
         JPanel panel3 = new JPanel();
         DefaultListModel<String> model_produse = new DefaultListModel<>();
@@ -555,10 +601,6 @@ public class WelcomePage extends JFrame {
             }
         }
 
-        System.setOut(System.out);
-        for (int i = 0; i < list_produse.size(); ++i)
-            System.out.println(list_produse.get(i));
-
         adauga.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -572,7 +614,6 @@ public class WelcomePage extends JFrame {
                         check_if_prod_adaugat.setText("Completati toate campurile!");
                     } else {
                         double pret_produs = Double.parseDouble(pret_produs_text);
-                        // System.out.println(denumire_produs + " " + categorie_produs + " " + tara_produs + " " + pret_produs);
                         if (! checkProdus(list_produse, denumire_produs, categorie_produs, tara_produs)) {
                             boolean ok = false;
                             for (int i = 0; i < list_produse.size(); ++i) {
@@ -580,8 +621,6 @@ public class WelcomePage extends JFrame {
                                         && categorie_produs.equals(list_produse.get(i).getCategorie())
                                         && tara_produs.equals(list_produse.get(i).getTaraOrigine())) {
                                     ok = true;
-                                    //System.setOut(System.out);
-                                    //System.out.println(pret_produs + " " + tara_produs);
                                     list_produse.get(i).setPret(pret_produs);
                                     check_if_prod_adaugat.setText("Produs adaugat!");
                                 }
@@ -624,7 +663,6 @@ public class WelcomePage extends JFrame {
                     String denumire_produs = alege_produs.getText();
                     String categorie_produs = (String) alege_categoria.getSelectedItem();
                     String tara_produs = (String) alege_tara.getSelectedItem();
-                    // double pret_produs = Double.parseDouble(alege_pret.getText());
                     if (denumire_produs.length() == 0 || categorie_produs.length() == 0
                             || tara_produs.length() == 0) {
                         check_if_prod_sters.setText("Completati toate campurile!");
@@ -677,7 +715,6 @@ public class WelcomePage extends JFrame {
                     String denumire_produs = alege_produs.getText();
                     String categorie_produs = (String) alege_categoria.getSelectedItem();
                     String tara_produs = (String) alege_tara.getSelectedItem();
-                    // System.out.println("leeel");
                     if (denumire_produs.length() == 0) {
                         check_if_produs_exista.setText("Completati campul de denumire!");
                     } else {
@@ -786,52 +823,6 @@ public class WelcomePage extends JFrame {
         panel3.add(Box.createRigidArea(new Dimension(50,10)));
         panel3.add(minipanel1);
 
-        TreeSet<String> countries = parsing.tariOrigine;
-        TreeSet<String> categorii_produse = parsing.categoriiProduse;
-        DefaultListModel<String> model1 = new DefaultListModel<>();
-        JList<String> list_countries = new JList<>(model1);
-        list_countries.setVisibleRowCount(15);
-        list_countries.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        JScrollPane scrolling_countries = new JScrollPane(list_countries);
-        scrolling_countries.setMaximumSize(new Dimension(200, 300));
-        scrolling_countries.setVerticalScrollBar(new JScrollBar(JScrollBar.VERTICAL));
-        Iterator iterator1 = countries.iterator();
-        while (iterator1.hasNext()) {
-            String country = iterator1.next().toString();
-            Magazin magazin_country = getMagazinMaxTara(list_magazine, country);
-            model1.addElement("Magazinul cu cele mai mari vanzari in " + country);
-            model1.addElement("Nume: " + maximum_maga.nume);
-            model1.addElement("Totalul fara taxe: " + df.format(magazin_country.getTotalFaraTaxe()).replaceAll(",", "."));
-            model1.addElement("Totalul cu taxe: " + df.format(magazin_country.getTotalCuTaxe()).replaceAll(",", "."));
-            model1.addElement("Totalul cu taxe scutite: " + df.format(magazin_country.getTotalCuTaxeScutite()).replaceAll(",", "."));
-            model1.addElement("\n\n");
-        }
-        DefaultListModel<String> model2 = new DefaultListModel<>();
-        JList<String> list_categorii = new JList<>(model2);
-        list_categorii.setVisibleRowCount(15);
-        list_categorii.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        JScrollPane scrolling_categorii = new JScrollPane(list_categorii);
-        scrolling_categorii.setMaximumSize(new Dimension(200, 300));
-        scrolling_categorii.setVerticalScrollBar(new JScrollBar(JScrollBar.VERTICAL));
-        Iterator iterator2 = categorii_produse.iterator();
-        while (iterator2.hasNext()) {
-            String categorie = iterator2.next().toString();
-            // System.out.println(categorie);
-            Magazin magazin_categorie = getMagazinMaxCategorie(list_magazine, categorie);
-            model2.addElement("Magazinul cu cele mai mari vanzari in " + categorie);
-            model2.addElement("Nume: " + magazin_categorie.nume);
-            model2.addElement("Totalul fara taxe: " + df.format(magazin_categorie.getTotalFaraTaxe()).replaceAll(",", "."));
-            model2.addElement("Totalul cu taxe: " + df.format(magazin_categorie.getTotalCuTaxe()).replaceAll(",", "."));
-            model2.addElement("Totalul cu taxe scutite: " + df.format(magazin_categorie.getTotalCuTaxeScutite()).replaceAll(",", "."));
-            model2.addElement("\n\n");
-        }
-
-        panel4.add(Box.createRigidArea(new Dimension(10,10)));
-        panel4.add(box_panel1);
-        panel4.add(Box.createRigidArea(new Dimension(10,10)));
-        panel4.add(scrolling_countries);
-        panel4.add(Box.createRigidArea(new Dimension(10,10)));
-        panel4.add(scrolling_categorii);
 
         this.tabs.setBorder(BorderFactory.createCompoundBorder(null, paddingBorder));
         this.tabs.setFont(new Font( "Georgia", Font.PLAIN, 14 ));
