@@ -47,8 +47,8 @@ public class Produs{
     public String toString () {
         String result = "Nume: " + this.denumire + "\n" + "Categorie: " + this.categorie + "\n";
         result += "Pret: " + this.pret + "\nTara origine: " + this.taraOrigine + "\n\n";
-        if (new Double (this.pret).equals(new Double(0)))
-            result = "";
+        //if (new Double (this.pret).equals(new Double(0)))
+        //    result = "";
         return result;
     }
 

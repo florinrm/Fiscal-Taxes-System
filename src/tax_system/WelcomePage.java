@@ -371,7 +371,7 @@ public class WelcomePage extends JFrame {
 
 
         FileParsing parsing = new FileParsing();
-        final Vector<Produs> list_produse = parsing.getListProdus("produse.txt");
+        final Vector<Produs> list_produse = parsing.getListProdus("produse1.txt");
         HashMap <String, HashMap<String, Double>> map = parsing.getTaxe1("taxe.txt");
         ArrayList <Magazin> list_magazine = parsing.getMagazine("facturi.txt", list_produse, map);
         DecimalFormat df = new DecimalFormat("#.####");
@@ -534,6 +534,22 @@ public class WelcomePage extends JFrame {
         add_produs.add(Box.createRigidArea(new Dimension(2,5)));
         add_produs.setAlignmentX(JPanel.LEFT_ALIGNMENT);
 
+        File file_produse_original = new File ("produse.txt");
+        File file_produse_final = new File ("produse1.txt");
+        if (file_produse_original.exists()) {
+            if (!file_produse_final.exists()) {
+                try {
+                    Files.copy(file_produse_original.toPath(), file_produse_final.toPath());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        System.setOut(System.out);
+        for (int i = 0; i < list_produse.size(); ++i)
+            System.out.println(list_produse.get(i));
+
         adauga.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -547,22 +563,32 @@ public class WelcomePage extends JFrame {
                         check_if_prod_adaugat.setText("Completati toate campurile!");
                     } else {
                         double pret_produs = Double.parseDouble(pret_produs_text);
-                        System.out.println(denumire_produs + " " + categorie_produs + " " + tara_produs + " " + pret_produs);
+                        // System.out.println(denumire_produs + " " + categorie_produs + " " + tara_produs + " " + pret_produs);
                         if (! checkProdus(list_produse, denumire_produs, categorie_produs, tara_produs)) {
-                            list_produse.remove (new Produs(denumire_produs, categorie_produs, tara_produs, 0));
-                            list_produse.add(new Produs(denumire_produs, categorie_produs, tara_produs, pret_produs));
-                            ArrayList<String> countries = new ArrayList<>(parsing.tariOrigine);
+                            boolean ok = false;
                             for (int i = 0; i < list_produse.size(); ++i) {
                                 if (denumire_produs.equals(list_produse.get(i).getDenumire())
                                         && categorie_produs.equals(list_produse.get(i).getCategorie())
-                                        && ! new Double (list_produse.get(i).getPret()).equals(new Double(0)))
-                                    countries.remove(list_produse.get(i).getTaraOrigine());
+                                        && tara_produs.equals(list_produse.get(i).getTaraOrigine())) {
+                                    ok = true;
+                                    //System.setOut(System.out);
+                                    //System.out.println(pret_produs + " " + tara_produs);
+                                    list_produse.get(i).setPret(pret_produs);
+                                    check_if_prod_adaugat.setText("Produs adaugat!");
+                                }
                             }
-                            for (int i = 0; i < countries.size(); ++i)
-                                list_produse.add(new Produs (denumire_produs, categorie_produs, countries.get(i), 0));
-                            System.out.println(countries.size());
+                            // e buna!
+                            if (!ok) {
+                                list_produse.add(new Produs(denumire_produs, categorie_produs, tara_produs, pret_produs));
+                                check_if_prod_adaugat.setText("Produs adaugat!");
+                                Iterator iterator_tari = parsing.tariOrigine.iterator();
+                                while (iterator_tari.hasNext()) {
+                                    String add_country = iterator_tari.next().toString();
+                                    if (!add_country.equals(tara_produs))
+                                        list_produse.add(new Produs(denumire_produs, categorie_produs, add_country, 0));
+                                }
+                            }
                             updateProduseFile(list_produse, parsing.tariOrigine);
-                            check_if_prod_adaugat.setText("Produs adaugat!");
                         } else {
                             check_if_prod_adaugat.setText("Produsul deja exista!");
                         }
@@ -624,12 +650,14 @@ public class WelcomePage extends JFrame {
                     String categorie_produs = (String) alege_categoria.getSelectedItem();
                     String tara_produs = (String) alege_tara.getSelectedItem();
                     // System.out.println("leeel");
-                    if (denumire_produs.length() == 0)
+                    if (denumire_produs.length() == 0) {
                         check_if_produs_exista.setText("Completati campul de denumire!");
-                    if (checkProdus(list_produse, denumire_produs, categorie_produs, tara_produs)) {
-                        check_if_produs_exista.setText("Produsul e in baza de date");
                     } else {
-                        check_if_produs_exista.setText("Produsul nu exista!");
+                        if (checkProdus(list_produse, denumire_produs, categorie_produs, tara_produs)) {
+                            check_if_produs_exista.setText("Produsul e in baza de date");
+                        } else {
+                            check_if_produs_exista.setText("Produsul nu exista!");
+                        }
                     }
                 }
             }
