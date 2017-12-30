@@ -18,13 +18,13 @@ public class ChangePassword extends JFrame {
 
     private JLabel notification = new JLabel();
 
-    public String encypherPassword (String password) {
+    private String encypherPassword (String password) {
         String cypher = "";
         MessageDigest digest;
         try {
             digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(password.getBytes("UTF-8"));
-            StringBuffer hexString = new StringBuffer();
+            StringBuilder hexString = new StringBuilder();
 
             for (int i = 0; i < hash.length; i++) {
                 String hex = Integer.toHexString(0xff & hash[i]);
@@ -39,7 +39,7 @@ public class ChangePassword extends JFrame {
     }
 
     public ChangePassword () {
-        super ("Change password");
+        super ("Schimbarea parolei");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setBackground(Color.BLUE);
         this.setMinimumSize(new Dimension(400, 200));
@@ -50,10 +50,10 @@ public class ChangePassword extends JFrame {
         JTextField username = new JTextField(25);
         JPasswordField old_password = new JPasswordField(25);
         JPasswordField new_password = new JPasswordField(25);
-        JLabel username_info = new JLabel("Username");
-        JLabel old_password_info = new JLabel("Vechea parola");
-        JLabel new_password_info = new JLabel("Noua parola");
-        JButton change = new JButton("Salveaza");
+        JLabel username_info = new JLabel("Numele utilizatorului");
+        JLabel old_password_info = new JLabel("Vechea parolă");
+        JLabel new_password_info = new JLabel("Noua parolă");
+        JButton change = new JButton("Salvează");
 
         change.addActionListener(new ActionListener() {
             @Override
@@ -63,7 +63,8 @@ public class ChangePassword extends JFrame {
                     if (username.getText().length() == 0
                             || old_password.getText().length() == 0
                             || new_password.getText().length() == 0) {
-                        notification.setText("Completati toate campurile!");
+                        notification.setText("Completați toate câmpurile!");
+                        notification.setForeground(Color.RED);
                     } else {
                         HashMap<String, String> map = new HashMap <>();
                         Scanner scan = null;
@@ -84,13 +85,14 @@ public class ChangePassword extends JFrame {
                                         found = true;
                                         map.put(data[0], new_pass);
                                     } else {
-                                        notification.setText("Parola veche introdusa gresit!");
+                                        notification.setText("Parola veche introdusă greșit!");
+                                        notification.setForeground(Color.RED);
                                     }
                                 }
                             }
                             if (found) {
                                 System.setOut(new PrintStream(new File("login.txt")));
-                                notification.setText("Parola schimbata cu succes!");
+                                notification.setText("Parola schimbată cu succes!");
                                 for (Map.Entry<String, String> entry: map.entrySet()) {
                                     System.out.println(entry.getKey() + " " + entry.getValue());
                                 }

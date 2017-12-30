@@ -36,7 +36,7 @@ public class AppStart extends JFrame {
     private JPanel buttons_panel;
 
     // criptez parolele in login.txt
-    public String encypherPassword (String password) {
+    private String encypherPassword (String password) {
         String cypher = "";
         MessageDigest digest;
         try {
@@ -56,7 +56,7 @@ public class AppStart extends JFrame {
         return cypher;
     }
 
-    public void insert_data (String username, String password) {
+    private void insert_data (String username, String password) {
         File data_file = new File("login.txt");
         HashMap <String, String> map = new HashMap<>();
         if (!data_file.exists())
@@ -92,7 +92,7 @@ public class AppStart extends JFrame {
         }
     }
 
-    public void login_account (String username, String password) {
+    private void login_account (String username, String password) {
         File data_file = new File ("login.txt");
         if (!data_file.exists())
         {
@@ -130,7 +130,7 @@ public class AppStart extends JFrame {
         }
     }
 
-    public boolean checkFiles () {
+    private boolean checkFiles () {
         File folder = new File (".");
         File[] files = folder.listFiles();
         int count = 0;
@@ -165,7 +165,7 @@ public class AppStart extends JFrame {
         this.change_password = new JButton("Change password");
         this.change_password.setAlignmentX(JButton.CENTER_ALIGNMENT);
         this.succeded = new JLabel();
-        ImageIcon icon = new ImageIcon("Apps-preferences-desktop-user-password-icon.png");
+        ImageIcon icon = new ImageIcon("icons\\Apps-preferences-desktop-user-password-icon.png");
         this.setIconImage(icon.getImage());
         this.succeded.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         this.panel.setLayout(new BoxLayout(this.panel, BoxLayout.Y_AXIS));
@@ -228,16 +228,8 @@ public class AppStart extends JFrame {
             UIManager.setLookAndFeel(
                     UIManager.getSystemLookAndFeelClassName());
         }
-        catch (UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
-        }
-        catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        catch (InstantiationException e) {
-            e.printStackTrace();
-        }
-        catch (IllegalAccessException e) {
+        catch (UnsupportedLookAndFeelException | ClassNotFoundException
+                | IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
         }
         new AppStart();
