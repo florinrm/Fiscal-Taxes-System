@@ -5,8 +5,6 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -154,28 +152,44 @@ public class WelcomePage extends JFrame {
         super ("Sistem de facturi fiscale");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setBackground(Color.BLUE);
-        this.setMinimumSize(new Dimension(1000, 700));
+        this.setMinimumSize(new Dimension(1100, 740));
         this.getContentPane().setLayout(new BorderLayout(10, 10));
         ImageIcon icon = new ImageIcon("icons\\dollar_icon.jpg");
         this.setIconImage(icon.getImage());
-        this.user_info = new JLabel("You are logged as: " + username);
-        this.user_info.setFont(new Font("Georgia", Font.CENTER_BASELINE, 12));
+        this.user_info = new JLabel("Sunteți logat ca: " + username);
+        this.user_info.setFont(new Font("Cambria Math", Font.PLAIN, 30));
+        this.user_info.setForeground(Color.white);
         this.info1 = new JPanel();
+        this.info1.setBackground(new Color(104, 11, 31));
         this.tabs = new JTabbedPane();
-        this.logout = new JButton("Logout  ");
-        logout.setHorizontalTextPosition(AbstractButton.LEADING);
-        logout.setVerticalTextPosition(SwingConstants.CENTER);
-        logout.setVerticalAlignment(SwingConstants.CENTER);
-
-        this.info1.setLayout(new BoxLayout(this.info1, BoxLayout.Y_AXIS));
+        this.logout = new JButton("Delogare");
+        JButton close = new JButton("Închide");
+        this.logout.setFont(new Font("Calibri Light", Font.PLAIN, 20));
+        close.setFont(new Font("Calibri Light", Font.PLAIN, 20));
+        close.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JButton button = (JButton) e.getSource();
+                if (button.getText().equals(close.getText())) {
+                    dispose();
+                    setVisible(false);
+                }
+            }
+        });
+        this.user_info.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        logout.setAlignmentX(JButton.CENTER_ALIGNMENT);
+        JPanel login_box = new JPanel();
+        login_box.setLayout(new BoxLayout(login_box, BoxLayout.PAGE_AXIS));
+        login_box.setBackground(new Color(104, 11, 31));
+        this.info1.setLayout(new FlowLayout());
         Border paddingBorder = BorderFactory.createEmptyBorder(10,0,0,0);
-        Border paddingBorder1 = BorderFactory.createEmptyBorder(10,0,10,0);
-        Border paddingBorder2 = BorderFactory.createEmptyBorder(10,20,10,10);
-        user_info.setBorder(BorderFactory.createCompoundBorder(null, paddingBorder1));
-        logout.setBorder(BorderFactory.createCompoundBorder(null, paddingBorder2));
-        this.info1.add(user_info);
+        JLabel profile_icon = new JLabel(new ImageIcon("icons\\login_icon_2.png"));
+        profile_icon.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        login_box.add(profile_icon);
+        login_box.add(user_info);
         JPanel button_panel = new JPanel();
-        button_panel.setLayout(new BoxLayout(button_panel, BoxLayout.Y_AXIS));
+        button_panel.setBackground(new Color(104, 11, 31));
+        button_panel.setLayout(new BoxLayout(button_panel, BoxLayout.PAGE_AXIS));
         button_panel.add(Box.createRigidArea(new Dimension(20,0)));
         button_panel.add(logout);
         logout.addActionListener(new ActionListener() {
@@ -189,7 +203,19 @@ public class WelcomePage extends JFrame {
                 }
             }
         });
-        this.info1.add(button_panel);
+        close.setAlignmentX(JButton.CENTER_ALIGNMENT);
+        login_box.add(Box.createRigidArea(new Dimension(10,10)));
+        login_box.add(button_panel);
+        login_box.add(Box.createRigidArea(new Dimension(10,10)));
+        login_box.add(close);
+        this.info1.add(Box.createRigidArea(new Dimension(10,10)));
+        this.info1.add(login_box);
+
+        FileParsing parsing = new FileParsing();
+        final Vector<Produs> list_produse = parsing.getListProdus("produse.txt");
+        HashMap <String, HashMap<String, Double>> map = parsing.getTaxe1("taxe.txt");
+        ArrayList <Magazin> list_magazine = parsing.getMagazine("facturi.txt", list_produse, map);
+        DecimalFormat df = new DecimalFormat("#.####");
 
         JPanel panel2 = new JPanel ();
         JPanel button_box = new JPanel();
@@ -227,11 +253,13 @@ public class WelcomePage extends JFrame {
                     File file = new File ("produse.txt");
                     if (file.exists()) {
                         file.delete();
+                        info.setForeground(new Color(22, 122, 72));
                         info.setText("produse.txt șters");
                         tabs.setEnabledAt(3, false);
                         tabs.setEnabledAt(2, false);
                     } else {
-                        info.setText("Fisierul nu exista!");
+                        info.setForeground(new Color(186, 26, 63));
+                        info.setText("Fișierul nu există!");
                     }
                 }
             }
@@ -244,10 +272,12 @@ public class WelcomePage extends JFrame {
                     File file = new File ("taxe.txt");
                     if (file.exists()) {
                         file.delete();
-                        info.setText("taxe.txt șters                ");
+                        info.setForeground(new Color(22, 122, 72));
+                        info.setText("taxe.txt șters");
                         tabs.setEnabledAt(3, false);
                     } else {
-                        info.setText("Fisierul nu exista!");
+                        info.setForeground(new Color(186, 26, 63));
+                        info.setText("Fișierul nu există!");
                     }
                 }
             }
@@ -260,10 +290,12 @@ public class WelcomePage extends JFrame {
                     File file = new File ("facturi.txt");
                     if (file.exists()) {
                         file.delete();
-                        info.setText("facturi.txt șters             ");
+                        info.setForeground(new Color(22, 122, 72));
+                        info.setText("facturi.txt șters");
                         tabs.setEnabledAt(3, false);
                     } else {
-                        info.setText("Fisierul nu exista!");
+                        info.setForeground(new Color(186, 26, 63));
+                        info.setText("Fișierul nu există!");
                     }
                 }
             }
@@ -285,12 +317,16 @@ public class WelcomePage extends JFrame {
                         produs_file.showOpenDialog(null);
                         File file = produs_file.getSelectedFile();
                         while (file == null) {
-                            info.setText("Alege fișierul!                  ");
+                            info.setForeground(new Color(186, 26, 63));
+                            info.setText("Alege fișierul!");
                             taxe_file.showOpenDialog(null);
                             file = taxe_file.getSelectedFile();
                         }
                         try {
                             Files.copy(file.toPath(), new File ("produse.txt").toPath());
+                            Vector<Produs> copy_list = parsing.getListProdus("produse.txt");
+                            list_produse.removeAll(list_produse);
+                            list_produse.addAll(copy_list);
                         } catch (IOException e1) {
                             e1.printStackTrace();
                         }
@@ -300,6 +336,7 @@ public class WelcomePage extends JFrame {
                         if (produs_file.exists() && !tabs.isEnabledAt(2))
                             tabs.setEnabledAt(2, true);
                     } else {
+                        info.setForeground(new Color(186, 26, 63));
                         info.setText("Fișierul produse.txt deja există!");
                     }
                 }
@@ -318,7 +355,8 @@ public class WelcomePage extends JFrame {
                         taxe_file.showOpenDialog(null);
                         File file = taxe_file.getSelectedFile();
                         while (file == null) {
-                            info.setText("Alege fișierul!                  ");
+                            info.setForeground(new Color(186, 26, 63));
+                            info.setText("Alege fișierul!");
                             taxe_file.showOpenDialog(null);
                             file = taxe_file.getSelectedFile();
                         }
@@ -331,7 +369,8 @@ public class WelcomePage extends JFrame {
                             tabs.setEnabledAt(3, true);
                         }
                     } else {
-                        info.setText("Fișierul taxe.txt deja există!   ");
+                        info.setForeground(new Color(186, 26, 63));
+                        info.setText("Fișierul taxe.txt deja există!");
                     }
                 }
             }
@@ -349,7 +388,8 @@ public class WelcomePage extends JFrame {
                         facturi_file.showOpenDialog(null);
                         File file = facturi_file.getSelectedFile();
                         while (file == null) {
-                            info.setText("Alege fișierul!                  ");
+                            info.setForeground(new Color(186, 26, 63));
+                            info.setText("Alege fișierul!");
                             taxe_file.showOpenDialog(null);
                             file = taxe_file.getSelectedFile();
                         }
@@ -361,6 +401,7 @@ public class WelcomePage extends JFrame {
                         if (!tabs.isEnabledAt(3) && checkFiles())
                             tabs.setEnabledAt(3, true);
                     } else {
+                        info.setForeground(new Color(186, 26, 63));
                         info.setText("Fișierul facturi.txt deja există!");
                     }
                 }
@@ -374,10 +415,13 @@ public class WelcomePage extends JFrame {
                 if (button.getText().equals(gestiune.getText())) {
                     if (checkFiles()) {
                         new Main();
+                        info.setForeground(new Color(22, 122, 72));
                         info.setText("Gestiunea s-a făcut!");
                     }
-                    else
+                    else {
+                        info.setForeground(new Color(186, 26, 63));
                         info.setText("Încarcă toate fișierele!");
+                    }
                 }
             }
         });
@@ -406,12 +450,6 @@ public class WelcomePage extends JFrame {
         panel2.add(button_box);
         panel2.add(Box.createRigidArea(new Dimension(120,10)));
         panel2.add(imgLabel);
-
-        FileParsing parsing = new FileParsing();
-        final Vector<Produs> list_produse = parsing.getListProdus("produse.txt");
-        HashMap <String, HashMap<String, Double>> map = parsing.getTaxe1("taxe.txt");
-        ArrayList <Magazin> list_magazine = parsing.getMagazine("facturi.txt", list_produse, map);
-        DecimalFormat df = new DecimalFormat("#.####");
 
         JPanel panel4 = new JPanel();
         panel4.setBackground(new Color(66, 143, 244));
@@ -523,12 +561,13 @@ public class WelcomePage extends JFrame {
             model2.addElement("\n\n");
         }
 
-        panel4.add(Box.createRigidArea(new Dimension(10,10)));
+        panel4.add(Box.createRigidArea(new Dimension(30,10)));
         panel4.add(box_panel1);
-        panel4.add(Box.createRigidArea(new Dimension(10,10)));
+        panel4.add(Box.createRigidArea(new Dimension(30,10)));
         panel4.add(scrolling_countries);
-        panel4.add(Box.createRigidArea(new Dimension(10,10)));
+        panel4.add(Box.createRigidArea(new Dimension(30,10)));
         panel4.add(scrolling_categorii);
+        panel4.add(Box.createRigidArea(new Dimension(30,10)));
 
         JPanel panel3 = new JPanel();
         DefaultListModel<String> model_produse = new DefaultListModel<>();
@@ -554,17 +593,18 @@ public class WelcomePage extends JFrame {
             if (! new Double (list_produse.get(i).getPret()).equals(new Double(0))) {
                 model_produse.addElement("Nume: " + list_produse.get(i).getDenumire());
                 model_produse.addElement("Categorie: " + list_produse.get(i).getCategorie());
-                model_produse.addElement("Tara origine: " + list_produse.get(i).getTaraOrigine());
-                model_produse.addElement("Pret: " + list_produse.get(i).getPret());
+                model_produse.addElement("Țară origine: " + list_produse.get(i).getTaraOrigine());
+                model_produse.addElement("Preț: " + list_produse.get(i).getPret());
                 model_produse.addElement("\n");
             }
         }
         JPanel minipanel1 = new JPanel();
         minipanel1.setBackground(new Color(22, 122, 72));
         minipanel1.setLayout(new BoxLayout(minipanel1, BoxLayout.Y_AXIS));
-        minipanel1.setMinimumSize(new Dimension(300, 400));
+        minipanel1.setMinimumSize(new Dimension(300, 630));
         String[] options = {"După denumire", "După țară"};
         JLabel criteriu = new JLabel("Alege criteriul de sortare");
+        criteriu.setFont(new Font("Cambria Math", Font.PLAIN, 15));
         criteriu.setForeground(Color.WHITE);
         criteriu.setAlignmentX(JLabel.LEFT_ALIGNMENT);
         JComboBox<String> list_options = new JComboBox<>(options);
@@ -618,10 +658,14 @@ public class WelcomePage extends JFrame {
             }
         });
         JLabel check_if_prod_adaugat = new JLabel("");
+        check_if_prod_adaugat.setFont(new Font("Cambria Math", Font.PLAIN, 15));
         JLabel check_if_prod_sters = new JLabel("");
+        check_if_prod_sters.setFont(new Font("Cambria Math", Font.PLAIN, 15));
         JLabel text1 = new JLabel ("Adaugă numele produsului:");
         text1.setForeground(Color.WHITE);
+        text1.setFont(new Font("Cambria Math", Font.PLAIN, 15));
         JLabel text2 = new JLabel ("Adaugă prețul produsului:");
+        text2.setFont(new Font("Cambria Math", Font.PLAIN, 15));
         text2.setForeground(Color.WHITE);
         JComboBox<String> alege_categoria = new JComboBox<>(new Vector<>(parsing.categoriiProduse));
         alege_categoria.setFont(new Font("Calibri Light", Font.PLAIN, 15));
@@ -630,7 +674,9 @@ public class WelcomePage extends JFrame {
         alege_tara.setFont(new Font("Calibri Light", Font.PLAIN, 15));
         alege_tara.setMaximumSize(new Dimension(120, 20));
         JTextField alege_produs = new JTextField(20);
+        alege_produs.setFont(new Font("Cambria Math", Font.PLAIN, 15));
         JTextField alege_pret = new JTextField(15);
+        alege_pret.setFont(new Font("Cambria Math", Font.PLAIN, 15));
         JButton adauga = new JButton("Adaugă produs");
         adauga.setFont(new Font("Calibri Light", Font.PLAIN, 15));
         JButton sterge = new JButton("Șterge produs");
@@ -654,7 +700,7 @@ public class WelcomePage extends JFrame {
         second_line_add.add(text2);
         second_line_add.add(Box.createRigidArea(new Dimension(5,10)));
         second_line_add.add(alege_pret);
-        add_produs.setMaximumSize(new Dimension(150, 150));
+        add_produs.setMaximumSize(new Dimension(200, 180));
         add_produs.add(first_line_add);
         add_produs.add(Box.createRigidArea(new Dimension(2,5)));
         add_produs.add(alege_categoria);
@@ -664,19 +710,6 @@ public class WelcomePage extends JFrame {
         add_produs.add(alege_tara);
         add_produs.add(Box.createRigidArea(new Dimension(2,5)));
         add_produs.setAlignmentX(JPanel.LEFT_ALIGNMENT);
-
-        /*
-        File file_produse_original = new File ("produse.txt");
-        File file_produse_final = new File ("produse1.txt");
-        if (file_produse_original.exists()) {
-            if (!file_produse_final.exists()) {
-                try {
-                    Files.copy(file_produse_original.toPath(), file_produse_final.toPath());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        } */
 
         adauga.addActionListener(new ActionListener() {
             @Override
@@ -688,7 +721,7 @@ public class WelcomePage extends JFrame {
                     String tara_produs = (String) alege_tara.getSelectedItem();
                     String pret_produs_text = alege_pret.getText();
                     if (denumire_produs.length() == 0 || pret_produs_text.length() == 0) {
-                        check_if_prod_adaugat.setText("Completati toate campurile!");
+                        check_if_prod_adaugat.setText("Completați toate câmpurile!");
                         check_if_prod_adaugat.setForeground(new Color(186, 26, 63));
                     } else {
                         double pret_produs = Double.parseDouble(pret_produs_text);
@@ -700,13 +733,13 @@ public class WelcomePage extends JFrame {
                                         && tara_produs.equals(list_produse.get(i).getTaraOrigine())) {
                                     ok = true;
                                     list_produse.get(i).setPret(pret_produs);
-                                    check_if_prod_adaugat.setText("Produs adaugat!");
+                                    check_if_prod_adaugat.setText("Produs adăugat!");
                                 }
                             }
                             // e buna!
                             if (!ok) {
                                 list_produse.add(new Produs(denumire_produs, categorie_produs, tara_produs, pret_produs));
-                                check_if_prod_adaugat.setText("Produs adaugat!");
+                                check_if_prod_adaugat.setText("Produs adăugat!");
                                 Iterator iterator_tari = parsing.tariOrigine.iterator();
                                 while (iterator_tari.hasNext()) {
                                     String add_country = iterator_tari.next().toString();
@@ -719,8 +752,8 @@ public class WelcomePage extends JFrame {
                                 if (! new Double (list_produse.get(i).getPret()).equals(new Double(0))) {
                                     model_produse.addElement("Nume: " + list_produse.get(i).getDenumire());
                                     model_produse.addElement("Categorie: " + list_produse.get(i).getCategorie());
-                                    model_produse.addElement("Tara origine: " + list_produse.get(i).getTaraOrigine());
-                                    model_produse.addElement("Pret: " + list_produse.get(i).getPret());
+                                    model_produse.addElement("Țară origine: " + list_produse.get(i).getTaraOrigine());
+                                    model_produse.addElement("Preț: " + list_produse.get(i).getPret());
                                     model_produse.addElement("\n");
                                 }
                             }
@@ -728,7 +761,7 @@ public class WelcomePage extends JFrame {
 
                             Magazin maximum_maga = getMagazinMaximum(list_magazine);
                             nume_magazin1.setText("Nume: " + maximum_maga.nume);
-                            total_fara_taxe1.setText("Totalul fara taxe: "
+                            total_fara_taxe1.setText("Totalul fără taxe: "
                                     + df.format(maximum_maga.getTotalFaraTaxe()).replaceAll(",", "."));
                             total_cu_taxe1.setText("Totalul cu taxe: "
                                     + df.format(maximum_maga.getTotalCuTaxe()).replaceAll(",", "."));
@@ -736,10 +769,10 @@ public class WelcomePage extends JFrame {
                                     + df.format(maximum_maga.getTotalCuTaxeScutite()).replaceAll(",", "."));
 
                             Factura max_factura = getFacturaMaxim(list_magazine);
-                            nume_factura.setText("Nume factura: " + max_factura.denumire);
-                            prov_factura.setText("Magazin de provenienta: "
+                            nume_factura.setText("Nume factură: " + max_factura.denumire);
+                            prov_factura.setText("Magazin de proveniență: "
                                     + searchFactura(list_magazine, max_factura).nume);
-                            total_fara_taxe_factura.setText("Totalul fara taxe: "
+                            total_fara_taxe_factura.setText("Totalul fără taxe: "
                                     + df.format(max_factura.getTotalFaraTaxe()).replaceAll(",", "."));
                             total_cu_taxe_factura.setText("Totalul cu taxe: "
                                     + df.format(max_factura.getTotalCuTaxe()).replaceAll(",", "."));
@@ -749,9 +782,9 @@ public class WelcomePage extends JFrame {
                             while (iterator3.hasNext()) {
                                 String country = iterator3.next().toString();
                                 Magazin magazin_country = getMagazinMaxTara(list_magazine, country);
-                                model1.addElement("Magazinul cu cele mai mari vanzari in " + country);
+                                model1.addElement("Magazinul cu cele mai mari vânzari în " + country);
                                 model1.addElement("Nume: " + maximum_maga.nume);
-                                model1.addElement("Totalul fara taxe: "
+                                model1.addElement("Totalul fără taxe: "
                                         + df.format(magazin_country.getTotalFaraTaxe()).replaceAll(",", "."));
                                 model1.addElement("Totalul cu taxe: "
                                         + df.format(magazin_country.getTotalCuTaxe()).replaceAll(",", "."));
@@ -765,9 +798,9 @@ public class WelcomePage extends JFrame {
                             while (iterator4.hasNext()) {
                                 String categorie = iterator4.next().toString();
                                 Magazin magazin_categorie = getMagazinMaxCategorie(list_magazine, categorie);
-                                model2.addElement("Magazinul cu cele mai mari vanzari in " + categorie);
+                                model2.addElement("Magazinul cu cele mai mari vânzari în " + categorie);
                                 model2.addElement("Nume: " + magazin_categorie.nume);
-                                model2.addElement("Totalul fara taxe: "
+                                model2.addElement("Totalul fără taxe: "
                                         + df.format(magazin_categorie.getTotalFaraTaxe()).replaceAll(",", "."));
                                 model2.addElement("Totalul cu taxe: "
                                         + df.format(magazin_categorie.getTotalCuTaxe()).replaceAll(",", "."));
@@ -777,8 +810,8 @@ public class WelcomePage extends JFrame {
                             }
                             updateProduseFile(list_produse, parsing.tariOrigine);
                         } else {
-                            check_if_prod_adaugat.setText("Produsul deja exista!");
-                            check_if_prod_adaugat.setForeground(Color.RED);
+                            check_if_prod_adaugat.setText("Produsul deja există!");
+                            check_if_prod_adaugat.setForeground(new Color(186, 26, 63));
                         }
                     }
                 }
@@ -795,7 +828,7 @@ public class WelcomePage extends JFrame {
                     String tara_produs = (String) alege_tara.getSelectedItem();
                     if (denumire_produs.length() == 0 || categorie_produs.length() == 0
                             || tara_produs.length() == 0) {
-                        check_if_prod_sters.setText("Completati toate campurile!");
+                        check_if_prod_sters.setText("Completați toate câmpurile!");
                         check_if_prod_sters.setForeground(new Color(186, 26, 63));
                     } else {
                         Vector<Produs> to_be_deleted = new Vector<>();
@@ -805,11 +838,11 @@ public class WelcomePage extends JFrame {
                                         && categorie_produs.equals(list_produse.get(i).getCategorie())) {
                                     if (tara_produs.equals(list_produse.get(i).getTaraOrigine())) {
                                         if (new Double (list_produse.get(i).getPret()).equals(new Double(0)))
-                                            check_if_prod_sters.setText("Produsul a fost deja sters");
+                                            check_if_prod_sters.setText("Produsul a fost deja șters!");
                                         else {
                                             list_produse.get(i).setPret(0);
                                             to_be_deleted.add(list_produse.get(i));
-                                            check_if_prod_sters.setText("Produsul a fost sters");
+                                            check_if_prod_sters.setText("Produsul a fost șters!");
                                         }
                                     } else {
                                         if (new Double (list_produse.get(i).getPret()).equals(new Double(0)))
@@ -825,8 +858,8 @@ public class WelcomePage extends JFrame {
                                 if (! new Double (list_produse.get(i).getPret()).equals(new Double(0))) {
                                     model_produse.addElement("Nume: " + list_produse.get(i).getDenumire());
                                     model_produse.addElement("Categorie: " + list_produse.get(i).getCategorie());
-                                    model_produse.addElement("Tara origine: " + list_produse.get(i).getTaraOrigine());
-                                    model_produse.addElement("Pret: " + list_produse.get(i).getPret());
+                                    model_produse.addElement("Țară origine: " + list_produse.get(i).getTaraOrigine());
+                                    model_produse.addElement("Preț: " + list_produse.get(i).getPret());
                                     model_produse.addElement("\n");
                                 }
                             }
@@ -834,7 +867,7 @@ public class WelcomePage extends JFrame {
 
                             Magazin maximum_maga = getMagazinMaximum(list_magazine);
                             nume_magazin1.setText("Nume: " + maximum_maga.nume);
-                            total_fara_taxe1.setText("Totalul fara taxe: "
+                            total_fara_taxe1.setText("Totalul fără taxe: "
                                     + df.format(maximum_maga.getTotalFaraTaxe()).replaceAll(",", "."));
                             total_cu_taxe1.setText("Totalul cu taxe: "
                                     + df.format(maximum_maga.getTotalCuTaxe()).replaceAll(",", "."));
@@ -843,9 +876,9 @@ public class WelcomePage extends JFrame {
 
                             Factura max_factura = getFacturaMaxim(list_magazine);
                             nume_factura.setText("Nume factura: " + max_factura.denumire);
-                            prov_factura.setText("Magazin de provenienta: "
+                            prov_factura.setText("Magazin de proveniență: "
                                     + searchFactura(list_magazine, max_factura).nume);
-                            total_fara_taxe_factura.setText("Totalul fara taxe: "
+                            total_fara_taxe_factura.setText("Totalul fără taxe: "
                                     + df.format(max_factura.getTotalFaraTaxe()).replaceAll(",", "."));
                             total_cu_taxe_factura.setText("Totalul cu taxe: "
                                     + df.format(max_factura.getTotalCuTaxe()).replaceAll(",", "."));
@@ -855,9 +888,9 @@ public class WelcomePage extends JFrame {
                             while (iterator3.hasNext()) {
                                 String country = iterator3.next().toString();
                                 Magazin magazin_country = getMagazinMaxTara(list_magazine, country);
-                                model1.addElement("Magazinul cu cele mai mari vanzari in " + country);
+                                model1.addElement("Magazinul cu cele mai mari vânzări în " + country);
                                 model1.addElement("Nume: " + maximum_maga.nume);
-                                model1.addElement("Totalul fara taxe: "
+                                model1.addElement("Totalul fără taxe: "
                                         + df.format(magazin_country.getTotalFaraTaxe()).replaceAll(",", "."));
                                 model1.addElement("Totalul cu taxe: "
                                         + df.format(magazin_country.getTotalCuTaxe()).replaceAll(",", "."));
@@ -871,9 +904,9 @@ public class WelcomePage extends JFrame {
                             while (iterator4.hasNext()) {
                                 String categorie = iterator4.next().toString();
                                 Magazin magazin_categorie = getMagazinMaxCategorie(list_magazine, categorie);
-                                model2.addElement("Magazinul cu cele mai mari vanzari in " + categorie);
+                                model2.addElement("Magazinul cu cele mai mari vanzari în " + categorie);
                                 model2.addElement("Nume: " + magazin_categorie.nume);
-                                model2.addElement("Totalul fara taxe: "
+                                model2.addElement("Totalul fără taxe: "
                                         + df.format(magazin_categorie.getTotalFaraTaxe()).replaceAll(",", "."));
                                 model2.addElement("Totalul cu taxe: "
                                         + df.format(magazin_categorie.getTotalCuTaxe()).replaceAll(",", "."));
@@ -882,14 +915,15 @@ public class WelcomePage extends JFrame {
                                 model2.addElement("\n\n");
                             }
                         } else {
-                            check_if_prod_sters.setText("Produsul nu exista!");
-                            check_if_prod_sters.setForeground(Color.RED);
+                            check_if_prod_sters.setText("Produsul nu există!");
+                            check_if_prod_sters.setForeground(new Color(186, 26, 63));
                         }
                     }
                 }
             }
         });
         JLabel check_if_produs_exista = new JLabel();
+        check_if_produs_exista.setFont(new Font("Cambria Math", Font.PLAIN, 15));
         cauta.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -899,27 +933,32 @@ public class WelcomePage extends JFrame {
                     String categorie_produs = (String) alege_categoria.getSelectedItem();
                     String tara_produs = (String) alege_tara.getSelectedItem();
                     if (denumire_produs.length() == 0) {
-                        check_if_produs_exista.setText("Completati campul de denumire!");
+                        check_if_produs_exista.setText("Completați câmpul de denumire!");
                         check_if_produs_exista.setForeground(new Color(186, 26, 63));
                     } else {
                         if (checkProdus(list_produse, denumire_produs, categorie_produs, tara_produs)) {
-                            check_if_produs_exista.setText("Produsul e in baza de date");
+                            check_if_produs_exista.setText("Produsul e în baza de date");
                         } else {
-                            check_if_produs_exista.setText("Produsul nu exista!");
+                            check_if_produs_exista.setText("Produsul nu există!");
+                            check_if_produs_exista.setForeground(new Color(186, 26, 63));
                         }
                     }
                 }
             }
         });
         JPanel editare_produs = new JPanel();
-        editare_produs.setMaximumSize(new Dimension(170, 70));
+        editare_produs.setMaximumSize(new Dimension(300, 100));
         editare_produs.setBackground(new Color(22, 122, 72));
-        JLabel text3 = new JLabel ("Adauga numele nou al produsului:");
+        JLabel text3 = new JLabel ("Adaugă numele nou al produsului:");
         text3.setForeground(Color.WHITE);
-        JLabel text4 = new JLabel ("Adauga pretul nou al produsului:");
+        text3.setFont(new Font("Cambria Math", Font.PLAIN, 15));
+        JLabel text4 = new JLabel ("Adaugă prețul nou al produsului:");
         text4.setForeground(Color.WHITE);
+        text4.setFont(new Font("Cambria Math", Font.PLAIN, 15));
         JTextField editare_nume = new JTextField(20);
+        editare_nume.setFont(new Font("Cambria Math", Font.PLAIN, 15));
         JTextField editare_pret = new JTextField(15);
+        editare_pret.setFont(new Font("Cambria Math", Font.PLAIN, 15));
         editare_produs.setLayout(new BoxLayout(editare_produs, BoxLayout.PAGE_AXIS));
         JPanel first_line_edit = new JPanel();
         JPanel second_line_edit = new JPanel();
@@ -937,6 +976,7 @@ public class WelcomePage extends JFrame {
         editare_produs.add(second_line_edit);
 
         JLabel edit_result = new JLabel();
+        edit_result.setFont(new Font("Cambria Math", Font.PLAIN, 15));
         editeaza.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -949,7 +989,7 @@ public class WelcomePage extends JFrame {
                     String categorie = (String) alege_categoria.getSelectedItem();
                     double first_price = findPret(list_produse, original_denumire, tara, categorie);
                     if (original_denumire.length() == 0 || final_denumire.length() == 0 || final_pret.length() == 0) {
-                        edit_result.setText("Completati toate campurile");
+                        edit_result.setText("Completați toate câmpurile");
                         edit_result.setForeground(new Color(186, 26, 63));
                     } else {
                         if (checkProdus(list_produse, original_denumire, categorie, tara)) {
@@ -970,8 +1010,8 @@ public class WelcomePage extends JFrame {
                                 if (! new Double (list_produse.get(i).getPret()).equals(new Double(0))) {
                                     model_produse.addElement("Nume: " + list_produse.get(i).getDenumire());
                                     model_produse.addElement("Categorie: " + list_produse.get(i).getCategorie());
-                                    model_produse.addElement("Tara origine: " + list_produse.get(i).getTaraOrigine());
-                                    model_produse.addElement("Pret: " + list_produse.get(i).getPret());
+                                    model_produse.addElement("Țară origine: " + list_produse.get(i).getTaraOrigine());
+                                    model_produse.addElement("Preț: " + list_produse.get(i).getPret());
                                     model_produse.addElement("\n");
                                 }
                             }
@@ -979,7 +1019,7 @@ public class WelcomePage extends JFrame {
 
                             Magazin maximum_maga = getMagazinMaximum(list_magazine);
                             nume_magazin1.setText("Nume: " + maximum_maga.nume);
-                            total_fara_taxe1.setText("Totalul fara taxe: "
+                            total_fara_taxe1.setText("Totalul fără taxe: "
                                     + df.format(maximum_maga.getTotalFaraTaxe()).replaceAll(",", "."));
                             total_cu_taxe1.setText("Totalul cu taxe: "
                                     + df.format(maximum_maga.getTotalCuTaxe()).replaceAll(",", "."));
@@ -987,10 +1027,10 @@ public class WelcomePage extends JFrame {
                                     + df.format(maximum_maga.getTotalCuTaxeScutite()).replaceAll(",", "."));
 
                             Factura max_factura = getFacturaMaxim(list_magazine);
-                            nume_factura.setText("Nume factura: " + max_factura.denumire);
-                            prov_factura.setText("Magazin de provenienta: "
+                            nume_factura.setText("Nume factură: " + max_factura.denumire);
+                            prov_factura.setText("Magazin de proveniență: "
                                     + searchFactura(list_magazine, max_factura).nume);
-                            total_fara_taxe_factura.setText("Totalul fara taxe: "
+                            total_fara_taxe_factura.setText("Totalul fără taxe: "
                                     + df.format(max_factura.getTotalFaraTaxe()).replaceAll(",", "."));
                             total_cu_taxe_factura.setText("Totalul cu taxe: "
                                     + df.format(max_factura.getTotalCuTaxe()).replaceAll(",", "."));
@@ -1000,9 +1040,9 @@ public class WelcomePage extends JFrame {
                             while (iterator3.hasNext()) {
                                 String country = iterator3.next().toString();
                                 Magazin magazin_country = getMagazinMaxTara(list_magazine, country);
-                                model1.addElement("Magazinul cu cele mai mari vanzari in " + country);
+                                model1.addElement("Magazinul cu cele mai mari vânzari în " + country);
                                 model1.addElement("Nume: " + maximum_maga.nume);
-                                model1.addElement("Totalul fara taxe: "
+                                model1.addElement("Totalul fără taxe: "
                                         + df.format(magazin_country.getTotalFaraTaxe()).replaceAll(",", "."));
                                 model1.addElement("Totalul cu taxe: "
                                         + df.format(magazin_country.getTotalCuTaxe()).replaceAll(",", "."));
@@ -1016,9 +1056,9 @@ public class WelcomePage extends JFrame {
                             while (iterator4.hasNext()) {
                                 String category = iterator4.next().toString();
                                 Magazin magazin_categorie = getMagazinMaxCategorie(list_magazine, category);
-                                model2.addElement("Magazinul cu cele mai mari vanzari in " + category);
+                                model2.addElement("Magazinul cu cele mai mari vânzări în " + category);
                                 model2.addElement("Nume: " + magazin_categorie.nume);
-                                model2.addElement("Totalul fara taxe: "
+                                model2.addElement("Totalul fără taxe: "
                                         + df.format(magazin_categorie.getTotalFaraTaxe()).replaceAll(",", "."));
                                 model2.addElement("Totalul cu taxe: "
                                         + df.format(magazin_categorie.getTotalCuTaxe()).replaceAll(",", "."));
@@ -1027,7 +1067,8 @@ public class WelcomePage extends JFrame {
                                 model2.addElement("\n\n");
                             }
                         } else {
-                            edit_result.setText("Produsul nu exista!");
+                            edit_result.setText("Produsul nu există!");
+                            edit_result.setForeground(new Color(186, 26, 63));
                         }
                     }
                 }
@@ -1063,6 +1104,7 @@ public class WelcomePage extends JFrame {
         panel3.add(scrolling);
         panel3.add(Box.createRigidArea(new Dimension(50,10)));
         panel3.add(minipanel1);
+        panel3.add(new JLabel(new ImageIcon("icons\\product_icon.png")));
 
 
         this.tabs.setBorder(BorderFactory.createCompoundBorder(null, paddingBorder));
@@ -1082,6 +1124,7 @@ public class WelcomePage extends JFrame {
         info2.setLayout(new BoxLayout(this.info2, BoxLayout.X_AXIS));
         this.info2.add(tabs); // adaugam in info2 JTabbedPane
         this.add(info2);
+        this.setResizable(false);
         this.setVisible(true);
         this.pack();
     }

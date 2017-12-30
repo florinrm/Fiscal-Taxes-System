@@ -28,24 +28,33 @@ public class UploadFiles extends JFrame {
     }
 
     public UploadFiles (String username) {
-        super ("Incarca fisierele");
+        super ("Încărcare de fișiere");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setForeground(Color.orange);
         this.setMinimumSize(new Dimension(400, 400));
         this.setLayout(new FlowLayout());
+        this.setIconImage(new ImageIcon("icons\\file_upload_icon.png").getImage());
         this.username = username;
         JPanel panel2 = new JPanel ();
         panel2.setLayout(new BoxLayout(panel2, BoxLayout.Y_AXIS));
         //panel2.setLayout(new GridLayout());
         panel2.setMinimumSize(new Dimension(400, 400));
-        JButton produs = new JButton("Load produse");
-        JButton taxe = new JButton("Load taxe");
-        JButton facturi = new JButton("Load facturi");
-        JButton start = new JButton ("Start aplicatie!");
-        JButton delete_produs = new JButton("Delete produse.txt");
-        JButton delete_taxe = new JButton("Delete taxe.txt");
-        JButton delete_facturi = new JButton("Delete facturi.txt");
+        JButton produs = new JButton("Încarcă produse.txt");
+        JButton taxe = new JButton("Încarcă taxe.txt");
+        JButton facturi = new JButton("Încarcă facturi.txti");
+        JButton start = new JButton ("Start aplicație!");
+        JButton delete_produs = new JButton("Șterge produse.txt");
+        JButton delete_taxe = new JButton("Șterge taxe.txt");
+        JButton delete_facturi = new JButton("Șterge facturi.txt");
+        produs.setFont(new Font("Calibri Light", Font.PLAIN, 20));
+        taxe.setFont(new Font("Calibri Light", Font.PLAIN, 20));
+        facturi.setFont(new Font("Calibri Light", Font.PLAIN, 20));
+        start.setFont(new Font("Calibri Light", Font.PLAIN, 20));
+        delete_facturi.setFont(new Font("Calibri Light", Font.PLAIN, 20));
+        delete_produs.setFont(new Font("Calibri Light", Font.PLAIN, 20));
+        delete_taxe.setFont(new Font("Calibri Light", Font.PLAIN, 20));
         JLabel info = new JLabel();
+        info.setFont(new Font("Cambria Math", Font.PLAIN, 20));
 
         delete_produs.addActionListener(new ActionListener() {
             @Override
@@ -55,7 +64,7 @@ public class UploadFiles extends JFrame {
                     File file = new File ("produse.txt");
                     if (file.exists()) {
                         file.delete();
-                        info.setText("produse.txt deleted");
+                        info.setText("produse.txt șters");
                     }
                 }
             }
@@ -68,7 +77,7 @@ public class UploadFiles extends JFrame {
                     File file = new File ("taxe.txt");
                     if (file.exists()) {
                         file.delete();
-                        info.setText("taxe.txt deleted");
+                        info.setText("taxe.txt șters");
                     }
                 }
             }
@@ -81,7 +90,7 @@ public class UploadFiles extends JFrame {
                     File file = new File ("facturi.txt");
                     if (file.exists()) {
                         file.delete();
-                        info.setText("facturi.txt deleted");
+                        info.setText("facturi.txt șters");
                     }
                 }
             }
@@ -113,7 +122,8 @@ public class UploadFiles extends JFrame {
                             e1.printStackTrace();
                         }
                     } else {
-                        info.setText("Fisierul produse.txt deja exista!");
+                        info.setForeground(new Color(186, 26, 63));
+                        info.setText("Fișierul produse.txt deja există!");
                     }
                 }
             }
@@ -141,9 +151,10 @@ public class UploadFiles extends JFrame {
                             e1.printStackTrace();
                         }
 
+                    } else {
+                        info.setForeground(new Color(186, 26, 63));
+                        info.setText("Fișierul taxe.txt deja există!");
                     }
-                } else {
-                    info.setText("Fisierul taxe.txt deja exista!");
                 }
             }
         });
@@ -169,9 +180,10 @@ public class UploadFiles extends JFrame {
                         } catch (IOException e1) {
                             e1.printStackTrace();
                         }
+                    } else {
+                        info.setForeground(new Color(186, 26, 63));
+                        info.setText("Fișierul facturi.txt deja există!");
                     }
-                } else {
-                    info.setText("Fisierul facturi.txt deja exista!");
                 }
             }
         });
@@ -187,7 +199,8 @@ public class UploadFiles extends JFrame {
                         setVisible(false);
                     }
                     else
-                        info.setText("Pune boss toate fisierele");
+                        info.setForeground(new Color(186, 26, 63));
+                        info.setText("Încarcă toate fișierele!");
                 }
             }
         });

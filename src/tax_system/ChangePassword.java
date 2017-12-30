@@ -42,11 +42,13 @@ public class ChangePassword extends JFrame {
         super ("Schimbarea parolei");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setBackground(Color.BLUE);
-        this.setMinimumSize(new Dimension(400, 200));
+        this.setMinimumSize(new Dimension(400, 400));
         this.setLayout(new FlowLayout());
+        this.setIconImage(new ImageIcon("icons\\Apps-preferences-desktop-user-password-icon.png").getImage());
 
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+        panel.setMinimumSize(new Dimension (400, 400));
         JTextField username = new JTextField(25);
         JPasswordField old_password = new JPasswordField(25);
         JPasswordField new_password = new JPasswordField(25);
@@ -54,6 +56,22 @@ public class ChangePassword extends JFrame {
         JLabel old_password_info = new JLabel("Vechea parolă");
         JLabel new_password_info = new JLabel("Noua parolă");
         JButton change = new JButton("Salvează");
+        JButton close = new JButton("Închide");
+        username_info.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        change.setAlignmentX(JButton.CENTER_ALIGNMENT);
+        close.setAlignmentX(JButton.CENTER_ALIGNMENT);
+        old_password_info.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        new_password_info.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        username_info.setFont(new Font("Cambria Math", Font.PLAIN, 15));
+        old_password_info.setFont(new Font("Cambria Math", Font.PLAIN, 15));
+        new_password_info.setFont(new Font("Cambria Math", Font.PLAIN, 15));
+        username.setFont(new Font("Calibri Light", Font.PLAIN, 15));
+        old_password.setFont(new Font("Calibri Light", Font.PLAIN, 15));
+        new_password.setFont(new Font("Calibri Light", Font.PLAIN, 15));
+        change.setFont(new Font("Calibri Light", Font.PLAIN, 15));
+        close.setFont(new Font("Calibri Light", Font.PLAIN, 15));
+        this.notification.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        this.notification.setFont(new Font("Cambria Math", Font.PLAIN, 15));
 
         change.addActionListener(new ActionListener() {
             @Override
@@ -64,7 +82,7 @@ public class ChangePassword extends JFrame {
                             || old_password.getText().length() == 0
                             || new_password.getText().length() == 0) {
                         notification.setText("Completați toate câmpurile!");
-                        notification.setForeground(Color.RED);
+                        notification.setForeground(new Color(186, 26, 63));
                     } else {
                         HashMap<String, String> map = new HashMap <>();
                         Scanner scan = null;
@@ -85,26 +103,38 @@ public class ChangePassword extends JFrame {
                                         found = true;
                                         map.put(data[0], new_pass);
                                     } else {
-                                        notification.setText("Parola veche introdusă greșit!");
                                         notification.setForeground(Color.RED);
+                                        notification.setText("Parola veche introdusă greșit!");
+                                        break;
                                     }
                                 }
                             }
                             if (found) {
                                 System.setOut(new PrintStream(new File("login.txt")));
+                                notification.setForeground(new Color(22, 122, 72));
                                 notification.setText("Parola schimbată cu succes!");
                                 for (Map.Entry<String, String> entry: map.entrySet()) {
                                     System.out.println(entry.getKey() + " " + entry.getValue());
                                 }
-                                dispose();
-                                setVisible(false);
                             } else {
+                                notification.setForeground(new Color(186, 26, 63));
                                 notification.setText("Username gresit!");
                             }
                         } catch (FileNotFoundException k) {
                             k.printStackTrace();
                         }
                     }
+                }
+            }
+        });
+
+        close.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JButton button = (JButton) e.getSource();
+                if (button.getText().equals(close.getText())) {
+                    dispose();
+                    setVisible(false);
                 }
             }
         });
@@ -122,11 +152,14 @@ public class ChangePassword extends JFrame {
         panel.add(new_password);
         panel.add(Box.createRigidArea(new Dimension(5,5)));
         panel.add(change);
+        panel.add(Box.createRigidArea(new Dimension(5,10)));
+        panel.add(close);
         panel.add(Box.createRigidArea(new Dimension(5,5)));
         panel.add(this.notification);
 
         this.add(panel);
         this.pack();
+        this.setResizable(false);
         this.setVisible(true);
     }
 }

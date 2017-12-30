@@ -75,7 +75,8 @@ public class AppStart extends JFrame {
                 String[] data = line.split (" ");
                 if (username.equals(data[0]))
                 {
-                    succeded.setText("Account already exists");
+                    succeded.setForeground(new Color(186, 26, 63));
+                    succeded.setText("Contul deja există!");
                     return;
                 }
                 map.put(data[0], data[1]);
@@ -86,7 +87,8 @@ public class AppStart extends JFrame {
             for (Map.Entry<String, String> entry: map.entrySet()) {
                 System.out.println(entry.getKey() + " " + entry.getValue());
             }
-            succeded.setText("Account created!");
+            succeded.setForeground(new Color(22, 122, 72));
+            succeded.setText("Cont creat!");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -96,7 +98,8 @@ public class AppStart extends JFrame {
         File data_file = new File ("login.txt");
         if (!data_file.exists())
         {
-            succeded.setText("Account doesn't exist!");
+            succeded.setForeground(new Color(186, 26, 63));
+            succeded.setText("Contul nu există!");
             return;
         }
         password = encypherPassword(password);
@@ -109,7 +112,8 @@ public class AppStart extends JFrame {
                 String[] data = line.split(" ");
                 if (username.equals(data[0])) {
                     if (password.equals(data[1])) {
-                        succeded.setText("Logged in succesfully!");
+                        succeded.setForeground(new Color(22, 122, 72));
+                        succeded.setText("Logare efectuată cu succes!");
                         if (checkFiles())
                             new WelcomePage(data[0]);
                         else
@@ -118,13 +122,15 @@ public class AppStart extends JFrame {
                         dispose();
                         return;
                     } else {
-                        succeded.setText("Wrong password!");
+                        succeded.setForeground(new Color(186, 26, 63));
+                        succeded.setText("Parola greșită!");
                         return;
                     }
                 }
             }
             scan.close();
-            succeded.setText("Account doesn't exist!");
+            succeded.setForeground(new Color(186, 26, 63));
+            succeded.setText("Contul nu există!");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -147,24 +153,32 @@ public class AppStart extends JFrame {
 
 
     public AppStart () {
-        super ("Application Login");
+        super ("Logare cont");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setBackground(Color.BLUE);
-        this.setMinimumSize(new Dimension(400, 200));
+        this.setMinimumSize(new Dimension(400, 300));
         this.setLayout(new FlowLayout());
 
         this.user = new JTextField(25);
         this.panel = new JPanel();
         this.pass = new JPasswordField(25);
-        this.username = new JLabel("Username", JLabel.CENTER);
-        this.password = new JLabel("Password", JLabel.CENTER);
+        this.username = new JLabel("Utilizator", JLabel.CENTER);
+        this.password = new JLabel("Parolă", JLabel.CENTER);
         this.username.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         this.password.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-        this.login_button = new JButton ("Login");
-        this.create_account = new JButton("Create new account");
-        this.change_password = new JButton("Change password");
+        this.username.setFont(new Font("Cambria Math", Font.PLAIN, 15));
+        this.password.setFont(new Font("Cambria Math", Font.PLAIN, 15));
+        this.pass.setFont(new Font("Calibri Light", Font.PLAIN, 15));
+        this.user.setFont(new Font("Calibri Light", Font.PLAIN, 15));
+        this.login_button = new JButton ("Loghează-te");
+        this.create_account = new JButton("Creează cont nou");
+        this.change_password = new JButton("Schimbați parola");
+        this.login_button.setFont(new Font("Calibri Light", Font.PLAIN, 15));
+        this.create_account.setFont(new Font("Calibri Light", Font.PLAIN, 15));
+        this.change_password.setFont(new Font("Calibri Light", Font.PLAIN, 15));
         this.change_password.setAlignmentX(JButton.CENTER_ALIGNMENT);
         this.succeded = new JLabel();
+        this.succeded.setFont(new Font("Cambria Math", Font.PLAIN, 15));
         ImageIcon icon = new ImageIcon("icons\\Apps-preferences-desktop-user-password-icon.png");
         this.setIconImage(icon.getImage());
         this.succeded.setAlignmentX(JLabel.CENTER_ALIGNMENT);
@@ -219,7 +233,7 @@ public class AppStart extends JFrame {
         this.panel.add(this.succeded);
         this.add(panel);
         this.pack();
-        this.setResizable(true);
+        this.setResizable(false);
         this.setVisible(true);
     }
 

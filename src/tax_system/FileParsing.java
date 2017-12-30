@@ -160,9 +160,11 @@ public class FileParsing {
                         if (data.indexOf("Denumire") == -1) {
                             String[] info = data.split(" ");
                             Produs produs = findProdus(produse, info[0], info[1]); // produsul
-                            double taxa = findTaxa1(taxe, produs.getCategorie(), info[1]); // taxa
-                            int cantitate = Integer.parseInt(info[2]);
-                            fact.add (new ProdusComandat(produs, taxa, cantitate));
+                            if (produs != null) {
+                                double taxa = findTaxa1(taxe, produs.getCategorie(), info[1]); // taxa
+                                int cantitate = Integer.parseInt(info[2]);
+                                fact.add (new ProdusComandat(produs, taxa, cantitate));
+                            }
                         }
                         data = scan.nextLine();
                     }
@@ -178,15 +180,17 @@ public class FileParsing {
             // adaugare manarie a la Mihalache aka sa parsezi ultima linie, caci citirea din while nu o ia in considerare
             String[] parsing = data.split(" ");
             Produs product = findProdus(produse, parsing[0], parsing[1]);
-            double tax = findTaxa1(taxe, product.getCategorie(), parsing[1]);
-            int quantity = Integer.parseInt(parsing[2]);
-            ProdusComandat prod = new ProdusComandat(product, tax, quantity); // last line
-            Vector <Factura> last_facturi = map2.get(count - 1);
-            Factura last = last_facturi.get(last_facturi.size() - 1);
-            last_facturi.remove(last);
-            last.addProdus(prod);
-            last_facturi.add(last);
-            map2.put(count - 1, last_facturi);
+            if (product != null) {
+                double tax = findTaxa1(taxe, product.getCategorie(), parsing[1]);
+                int quantity = Integer.parseInt(parsing[2]);
+                ProdusComandat prod = new ProdusComandat(product, tax, quantity); // last line
+                Vector <Factura> last_facturi = map2.get(count - 1);
+                Factura last = last_facturi.get(last_facturi.size() - 1);
+                last_facturi.remove(last);
+                last.addProdus(prod);
+                last_facturi.add(last);
+                map2.put(count - 1, last_facturi);
+            }
             // construim obiectele de tip Magazin si le adaugam in lista de obiecte Magazin
             for (int i = 0; i < count; ++i) {
                 Magazin shop = getMagazin(map.get(i).name, map.get(i).type, map2.get(i), this.tariOrigine);
