@@ -32,6 +32,7 @@ public class AppStart extends JFrame {
     private JLabel password;
     private JLabel succeded;
     private JButton create_account;
+    private JButton change_password;
     private JPanel buttons_panel;
 
     // criptez parolele in login.txt
@@ -144,6 +145,7 @@ public class AppStart extends JFrame {
         return (count == 3);
     }
 
+
     public AppStart () {
         super ("Application Login");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -160,6 +162,8 @@ public class AppStart extends JFrame {
         this.password.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         this.login_button = new JButton ("Login");
         this.create_account = new JButton("Create new account");
+        this.change_password = new JButton("Change password");
+        this.change_password.setAlignmentX(JButton.CENTER_ALIGNMENT);
         this.succeded = new JLabel();
         ImageIcon icon = new ImageIcon("Apps-preferences-desktop-user-password-icon.png");
         this.setIconImage(icon.getImage());
@@ -169,7 +173,7 @@ public class AppStart extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JButton button = (JButton) e.getSource();
-                if (button.getText().equals("Create new account")) {
+                if (button.getText().equals(create_account.getText())) {
                     insert_data(user.getText(), pass.getText());
                 }
             }
@@ -178,11 +182,22 @@ public class AppStart extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JButton button = (JButton) e.getSource();
-                if (button.getText().equals("Login")) {
+                if (button.getText().equals(login_button.getText())) {
                     login_account(user.getText(), pass.getText());
                 }
             }
         });
+
+        this.change_password.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JButton button = (JButton) e.getSource();
+                if (button.getText().equals(change_password.getText())) {
+                    new ChangePassword();
+                }
+            }
+        });
+
         this.login_button.setMnemonic(KeyEvent.VK_ENTER);
         this.buttons_panel = new JPanel();
         this.buttons_panel.setLayout(new FlowLayout());
@@ -198,6 +213,8 @@ public class AppStart extends JFrame {
         this.panel.add(this.pass);
         this.panel.add(Box.createRigidArea(new Dimension(5,5)));
         this.panel.add(this.buttons_panel);
+        this.panel.add(Box.createRigidArea(new Dimension(5,5)));
+        this.panel.add(this.change_password);
         this.panel.add(Box.createRigidArea(new Dimension(5,5)));
         this.panel.add(this.succeded);
         this.add(panel);
