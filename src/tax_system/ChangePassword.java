@@ -41,7 +41,6 @@ public class ChangePassword extends JFrame {
     public ChangePassword () {
         super ("Schimbarea parolei");
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        this.setBackground(Color.BLUE);
         this.setMinimumSize(new Dimension(400, 400));
         this.setLayout(new FlowLayout());
         this.setIconImage(new ImageIcon("icons\\Apps-preferences-desktop-user-password-icon.png").getImage());

@@ -29,7 +29,7 @@ public class UploadFiles extends JFrame {
 
     public UploadFiles (String username) {
         super ("Încărcare de fișiere");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         this.setForeground(Color.orange);
         this.setMinimumSize(new Dimension(400, 400));
         this.setLayout(new FlowLayout());

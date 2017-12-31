@@ -734,12 +734,14 @@ public class WelcomePage extends JFrame {
                                     ok = true;
                                     list_produse.get(i).setPret(pret_produs);
                                     check_if_prod_adaugat.setText("Produs adăugat!");
+                                    check_if_prod_adaugat.setForeground(Color.BLACK);
                                 }
                             }
                             // e buna!
                             if (!ok) {
                                 list_produse.add(new Produs(denumire_produs, categorie_produs, tara_produs, pret_produs));
                                 check_if_prod_adaugat.setText("Produs adăugat!");
+                                check_if_prod_adaugat.setForeground(Color.BLACK);
                                 Iterator iterator_tari = parsing.tariOrigine.iterator();
                                 while (iterator_tari.hasNext()) {
                                     String add_country = iterator_tari.next().toString();
@@ -837,12 +839,15 @@ public class WelcomePage extends JFrame {
                                 if (denumire_produs.equals(list_produse.get(i).getDenumire())
                                         && categorie_produs.equals(list_produse.get(i).getCategorie())) {
                                     if (tara_produs.equals(list_produse.get(i).getTaraOrigine())) {
-                                        if (new Double (list_produse.get(i).getPret()).equals(new Double(0)))
+                                        if (new Double(list_produse.get(i).getPret()).equals(new Double(0))) {
                                             check_if_prod_sters.setText("Produsul a fost deja șters!");
+                                            check_if_prod_sters.setForeground(new Color(186, 26, 63));
+                                        }
                                         else {
                                             list_produse.get(i).setPret(0);
                                             to_be_deleted.add(list_produse.get(i));
                                             check_if_prod_sters.setText("Produsul a fost șters!");
+                                            check_if_prod_sters.setForeground(Color.BLACK);
                                         }
                                     } else {
                                         if (new Double (list_produse.get(i).getPret()).equals(new Double(0)))
@@ -938,6 +943,8 @@ public class WelcomePage extends JFrame {
                     } else {
                         if (checkProdus(list_produse, denumire_produs, categorie_produs, tara_produs)) {
                             check_if_produs_exista.setText("Produsul e în baza de date");
+                            check_if_produs_exista.setForeground(Color.BLACK);
+                            new DateProdus(denumire_produs, categorie_produs, list_magazine);
                         } else {
                             check_if_produs_exista.setText("Produsul nu există!");
                             check_if_produs_exista.setForeground(new Color(186, 26, 63));
@@ -1002,6 +1009,7 @@ public class WelcomePage extends JFrame {
                                     if (tara.equals(list_produse.get(i).getTaraOrigine()))
                                         list_produse.get(i).setPret(final_price);
                                     edit_result.setText("Produsul a fost editat!");
+                                    edit_result.setForeground(Color.BLACK);
                                     updateProduseFile(list_produse, parsing.tariOrigine);
                                 }
                             }
