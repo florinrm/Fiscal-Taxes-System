@@ -173,6 +173,7 @@ public class WelcomePage extends JFrame {
                 if (button.getText().equals(close.getText())) {
                     dispose();
                     setVisible(false);
+                    System.exit(69); // wink wink
                 }
             }
         });

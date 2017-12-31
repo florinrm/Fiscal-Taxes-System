@@ -40,7 +40,7 @@ public class AppStart extends JFrame {
         String cypher = "";
         MessageDigest digest;
         try {
-            digest = MessageDigest.getInstance("SHA-256");
+            digest = MessageDigest.getInstance("SHA-256"); // criptare cu SHA-256
             byte[] hash = digest.digest(password.getBytes("UTF-8"));
             StringBuffer hexString = new StringBuffer();
 
@@ -56,6 +56,7 @@ public class AppStart extends JFrame {
         return cypher;
     }
 
+    // crearea unui cont nou
     private void insert_data (String username, String password) {
         File data_file = new File("login.txt");
         HashMap <String, String> map = new HashMap<>();
@@ -84,14 +85,14 @@ public class AppStart extends JFrame {
                     succeded.setText("Contul deja există!");
                     return;
                 }
-                map.put(data[0], data[1]);
+                map.put(data[0], data[1]); // adaugam in dictionarul pe care il scriem in login.txt
             }
             scan.close();
-            map.put(username, password);
+            map.put(username, password); // adaugam informatiile noi
             System.setOut(new PrintStream(data_file));
             for (Map.Entry<String, String> entry: map.entrySet()) {
                 System.out.println(entry.getKey() + " " + entry.getValue());
-            }
+            } // scriem in fisier datele despre useri
             succeded.setForeground(new Color(22, 122, 72));
             succeded.setText("Cont creat!");
         } catch (FileNotFoundException e) {
@@ -99,6 +100,7 @@ public class AppStart extends JFrame {
         }
     }
 
+    // logarea in cont
     private void login_account (String username, String password) {
         File data_file = new File ("login.txt");
         if (!data_file.exists())
@@ -107,7 +109,7 @@ public class AppStart extends JFrame {
             succeded.setText("Contul nu există!");
             return;
         }
-        password = encypherPassword(password);
+        password = encypherPassword(password); // criptare
         Scanner scan = null;
         try {
             scan = new Scanner (data_file);
@@ -116,13 +118,13 @@ public class AppStart extends JFrame {
                 line = scan.nextLine();
                 String[] data = line.split(" ");
                 if (username.equals(data[0])) {
-                    if (password.equals(data[1])) {
+                    if (password.equals(data[1])) { // daca contul si username-ul sunt corecte => start aplicatie
                         succeded.setForeground(new Color(22, 122, 72));
                         succeded.setText("Logare efectuată cu succes!");
                         if (checkFiles())
-                            new WelcomePage(data[0]);
+                            new WelcomePage(data[0]); // aplicatie
                         else
-                            new UploadFiles(data[0]);
+                            new UploadFiles(data[0]); // daca nu-s toate fisierele, le incarcam
                         setVisible(false); //you can't see me!
                         dispose();
                         return;
@@ -141,6 +143,7 @@ public class AppStart extends JFrame {
         }
     }
 
+    // vedem daca sunt toate cele 3 fisiere in radacina proiectului
     private boolean checkFiles () {
         File folder = new File (".");
         File[] files = folder.listFiles();
@@ -188,6 +191,8 @@ public class AppStart extends JFrame {
         this.setIconImage(icon.getImage());
         this.succeded.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         this.panel.setLayout(new BoxLayout(this.panel, BoxLayout.Y_AXIS));
+        this.login_button.setMnemonic(KeyEvent.VK_ENTER);
+        // apasarea pe butonul de creare de cont nou
         this.create_account.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -197,6 +202,7 @@ public class AppStart extends JFrame {
                 }
             }
         });
+        // apasarea pe butonul de logare
         this.login_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -207,6 +213,7 @@ public class AppStart extends JFrame {
             }
         });
 
+        // daca apas pe butonul de schimbarea parolei va aparea fereastra corespunzatoare
         this.change_password.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -217,7 +224,6 @@ public class AppStart extends JFrame {
             }
         });
 
-        this.login_button.setMnemonic(KeyEvent.VK_ENTER);
         this.buttons_panel = new JPanel();
         this.buttons_panel.setLayout(new FlowLayout());
         this.panel.setMinimumSize(new Dimension (300, 400));

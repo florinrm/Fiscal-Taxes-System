@@ -4,13 +4,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
+//clasa de afisare a datelor unui produs dat
 public class DateProdus extends JFrame {
     public DateProdus (String denumire, String categorie, ArrayList<Magazin> list_magazine) {
         super ("Date despre produsul " + denumire);
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         this.setMinimumSize(new Dimension(600, 400));
         this.setLayout(new FlowLayout());
-        this.setIconImage(new ImageIcon("icons\\Apps-preferences-desktop-user-password-icon.png").getImage());
+        this.setIconImage(new ImageIcon("icons\\notepad-edit.png").getImage());
 
         JPanel panel = new JPanel();
         panel.setBackground(new Color(22, 122, 72));
@@ -27,6 +28,7 @@ public class DateProdus extends JFrame {
         info.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         scroll.setAlignmentX(JScrollPane.CENTER_ALIGNMENT);
 
+        // vedem in ce magazine e produsul cautat si le listam cu datele despre produsul cerut
         for (int i = 0; i < list_magazine.size(); ++i) {
             model1.addElement(list_magazine.get(i).nume + ": ");
             boolean found = false;
@@ -48,7 +50,7 @@ public class DateProdus extends JFrame {
             }
         }
         panel.add(info);
-        panel.add(Box.createRigidArea(new Dimension(10,5)));
+        panel.add(Box.createRigidArea(new Dimension(10,10)));
         panel.add(scroll);
 
         this.setContentPane(panel);

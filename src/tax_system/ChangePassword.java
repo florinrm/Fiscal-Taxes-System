@@ -18,6 +18,7 @@ public class ChangePassword extends JFrame {
 
     private JLabel notification = new JLabel();
 
+    // criptare parole
     private String encypherPassword (String password) {
         String cypher = "";
         MessageDigest digest;
@@ -81,6 +82,7 @@ public class ChangePassword extends JFrame {
                             || old_password.getText().length() == 0
                             || new_password.getText().length() == 0) {
                         notification.setText("Completați toate câmpurile!");
+                        // toate campurile trebuie sa fie completate
                         notification.setForeground(new Color(186, 26, 63));
                     } else {
                         HashMap<String, String> map = new HashMap <>();
@@ -88,16 +90,16 @@ public class ChangePassword extends JFrame {
                         String user = username.getText();
                         String old_pass = old_password.getText();
                         String new_pass = new_password.getText();
-                        if (new_pass.length() == 0) {
+                        if (new_pass.length() == 0) { // parola nu trebuie sa fie goala
                             notification.setForeground(new Color(186, 26, 63));
                             notification.setText("Parola trebuie să conțină caractere!");
                             return;
-                        }
+                        } // criptare parole
                         old_pass = encypherPassword(old_pass);
                         new_pass = encypherPassword(new_pass);
                         try {
                             scan = new Scanner(new File("login.txt"));
-                            boolean found = false;
+                            boolean found = false; // verificare daca username-ul e corect sau nu
                             while (scan.hasNextLine()) {
                                 String line = scan.nextLine();
                                 String[] data = line.split(" ");
@@ -105,7 +107,7 @@ public class ChangePassword extends JFrame {
                                 if (data[0].equals(user)) {
                                     if (data[1].equals(old_pass)) {
                                         found = true;
-                                        map.put(data[0], new_pass);
+                                        map.put(data[0], new_pass); // adaugam in dictionar username-ul si parola noua
                                     } else {
                                         notification.setForeground(Color.RED);
                                         notification.setText("Parola veche introdusă greșit!");
@@ -113,7 +115,7 @@ public class ChangePassword extends JFrame {
                                     }
                                 }
                             }
-                            if (found) {
+                            if (found) { // rescriem in login.txt baza de date ale user-ilor
                                 System.setOut(new PrintStream(new File("login.txt")));
                                 notification.setForeground(new Color(22, 122, 72));
                                 notification.setText("Parola schimbată cu succes!");
