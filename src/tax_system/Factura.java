@@ -35,6 +35,7 @@ public class Factura implements Comparable <Factura> {
         return set;
     }
 
+    // facem toString ca sa ne ajuta pentru scrierea in out.txt
     public String toString () {
         String result = "\n" + this.denumire + "\n\n";
         DecimalFormat df = new DecimalFormat("#.####"); // folosim DecimalFormat pentru aproximarea vanzarilor
@@ -43,10 +44,10 @@ public class Factura implements Comparable <Factura> {
         Iterator iter = this.tariOrigine.iterator(); // iteram prin toate tarile din care pot fi importate produse
         while (iter.hasNext()) {
             String country = iter.next().toString();
-            if (this.getTotalTaraFaraTaxe(country) != 0) // daca avem produse dintr-o tara, afisam
+            if (this.getTotalTaraFaraTaxe(country) != 0) // daca avem produse dintr-o tara, afisam vanzarile cu / fara taxe
                 result += country + " " + df.format(this.getTotalTaraFaraTaxe(country)) + " "
                         + df.format(this.getTotalTaraCuTaxe(country)) + "\n";
-            else
+            else // altfel adaugam 0 la string-ul rezultat
                 result += country + " 0\n";
         }
         return result;
@@ -98,7 +99,7 @@ public class Factura implements Comparable <Factura> {
         return this.getTotalTaraFaraTaxe (country) + this.getTaxeTara (country);
     }
 
-    // calcul total fara taxe pe o categorie data
+    // calcul total fara taxe al produselor dintr-o categorie data
     public double getTotalCategorieFaraTaxe (String categorie) {
         double total = 0;
         for (int i = 0; i < this.lista_produse.size(); ++i) {
@@ -108,6 +109,7 @@ public class Factura implements Comparable <Factura> {
         return total;
     }
 
+    // calcul taxe pentru produse dintr-o categorie data
     public double getTaxeCategorie (String categorie) {
         double total = 0;
         for (int i = 0; i < this.lista_produse.size(); ++i) {

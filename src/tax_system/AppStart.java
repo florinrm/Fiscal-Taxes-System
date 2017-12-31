@@ -66,6 +66,11 @@ public class AppStart extends JFrame {
                 e.printStackTrace();
             }
         Scanner scan = null;
+        if (password.length() == 0) {
+            succeded.setForeground(new Color(186, 26, 63));
+            succeded.setText("Parola trebuie să conțină caractere!");
+            return;
+        }
         password = encypherPassword(password);
         try {
             scan = new Scanner(data_file);
@@ -240,7 +245,7 @@ public class AppStart extends JFrame {
     public static void main (String[] args) {
         try {
             UIManager.setLookAndFeel(
-                    UIManager.getSystemLookAndFeelClassName());
+                    UIManager.getSystemLookAndFeelClassName()); // un Look and Feel placut
         }
         catch (UnsupportedLookAndFeelException | ClassNotFoundException
                 | IllegalAccessException | InstantiationException e) {

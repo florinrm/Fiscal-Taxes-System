@@ -40,7 +40,7 @@ public class ChangePassword extends JFrame {
 
     public ChangePassword () {
         super ("Schimbarea parolei");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         this.setBackground(Color.BLUE);
         this.setMinimumSize(new Dimension(400, 400));
         this.setLayout(new FlowLayout());
@@ -89,6 +89,11 @@ public class ChangePassword extends JFrame {
                         String user = username.getText();
                         String old_pass = old_password.getText();
                         String new_pass = new_password.getText();
+                        if (new_pass.length() == 0) {
+                            notification.setForeground(new Color(186, 26, 63));
+                            notification.setText("Parola trebuie să conțină caractere!");
+                            return;
+                        }
                         old_pass = encypherPassword(old_pass);
                         new_pass = encypherPassword(new_pass);
                         try {
@@ -118,7 +123,7 @@ public class ChangePassword extends JFrame {
                                 }
                             } else {
                                 notification.setForeground(new Color(186, 26, 63));
-                                notification.setText("Username gresit!");
+                                notification.setText("Username greșit!");
                             }
                         } catch (FileNotFoundException k) {
                             k.printStackTrace();

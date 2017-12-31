@@ -27,9 +27,10 @@ public final class Gestiune {
         this.tipuriMagazine = tipuriMagazine;
     }
 
+    // asa vom afisa in out.txt
     public String toString () {
         String result = "";
-        Iterator iter = tipuriMagazine.iterator();
+        Iterator iter = tipuriMagazine.iterator(); // iteram prin tipurile de magazine pentru out.txt
         Collections.sort(magazine);
         while (iter.hasNext()) {
             String type = iter.next().toString();
