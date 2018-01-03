@@ -46,7 +46,8 @@ public class AppStart extends JFrame {
 
             for (int i = 0; i < hash.length; i++) {
                 String hex = Integer.toHexString(0xff & hash[i]);
-                if(hex.length() == 1) hexString.append('0');
+                if(hex.length() == 1)
+                    hexString.append('0');
                 hexString.append(hex);
             }
             cypher = hexString.toString().toUpperCase();
@@ -67,9 +68,9 @@ public class AppStart extends JFrame {
                 e.printStackTrace();
             }
         Scanner scan = null;
-        if (password.length() == 0) {
+        if (username.length() == 0 || password.length() == 0) {
             succeded.setForeground(new Color(186, 26, 63));
-            succeded.setText("Parola trebuie să conțină caractere!");
+            succeded.setText("Completați toate câmpurile!");
             return;
         }
         password = encypherPassword(password);
@@ -107,6 +108,11 @@ public class AppStart extends JFrame {
         {
             succeded.setForeground(new Color(186, 26, 63));
             succeded.setText("Contul nu există!");
+            return;
+        }
+        if (username.length() == 0 || password.length() == 0) {
+            succeded.setForeground(new Color(186, 26, 63));
+            succeded.setText("Completați toate câmpurile!");
             return;
         }
         password = encypherPassword(password); // criptare
@@ -163,30 +169,31 @@ public class AppStart extends JFrame {
     public AppStart () {
         super ("Logare cont");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setBackground(Color.BLUE);
-        this.setMinimumSize(new Dimension(400, 300));
+        this.setMinimumSize(new Dimension(600, 600));
         this.setLayout(new FlowLayout());
+        this.getContentPane().setBackground(new Color(66, 167, 244));
 
         this.user = new JTextField(25);
         this.panel = new JPanel();
+        this.panel.setBackground(new Color(66, 167, 244));
         this.pass = new JPasswordField(25);
         this.username = new JLabel("Utilizator", JLabel.CENTER);
         this.password = new JLabel("Parolă", JLabel.CENTER);
         this.username.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         this.password.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-        this.username.setFont(new Font("Cambria Math", Font.PLAIN, 15));
-        this.password.setFont(new Font("Cambria Math", Font.PLAIN, 15));
-        this.pass.setFont(new Font("Calibri Light", Font.PLAIN, 15));
-        this.user.setFont(new Font("Calibri Light", Font.PLAIN, 15));
-        this.login_button = new JButton ("Loghează-te");
+        this.username.setFont(new Font("Segoe UI", Font.PLAIN, 20));
+        this.password.setFont(new Font("Segoe UI", Font.PLAIN, 20));
+        this.pass.setFont(new Font("Calibri Light", Font.PLAIN, 20));
+        this.user.setFont(new Font("Calibri Light", Font.PLAIN, 20));
+        this.login_button = new JButton ("Logare");
         this.create_account = new JButton("Creează cont nou");
         this.change_password = new JButton("Schimbați parola");
-        this.login_button.setFont(new Font("Calibri Light", Font.PLAIN, 15));
-        this.create_account.setFont(new Font("Calibri Light", Font.PLAIN, 15));
-        this.change_password.setFont(new Font("Calibri Light", Font.PLAIN, 15));
+        this.login_button.setFont(new Font("Calibri Light", Font.PLAIN, 20));
+        this.create_account.setFont(new Font("Calibri Light", Font.PLAIN, 20));
+        this.change_password.setFont(new Font("Calibri Light", Font.PLAIN, 20));
         this.change_password.setAlignmentX(JButton.CENTER_ALIGNMENT);
-        this.succeded = new JLabel();
-        this.succeded.setFont(new Font("Cambria Math", Font.PLAIN, 15));
+        this.succeded = new JLabel("              ");
+        this.succeded.setFont(new Font("Segoe UI", Font.PLAIN, 20));
         ImageIcon icon = new ImageIcon("icons\\Apps-preferences-desktop-user-password-icon.png");
         this.setIconImage(icon.getImage());
         this.succeded.setAlignmentX(JLabel.CENTER_ALIGNMENT);
@@ -225,10 +232,14 @@ public class AppStart extends JFrame {
         });
 
         this.buttons_panel = new JPanel();
+        this.buttons_panel.setBackground(new Color(66, 167, 244));
         this.buttons_panel.setLayout(new FlowLayout());
         this.panel.setMinimumSize(new Dimension (300, 400));
         this.buttons_panel.add(this.login_button);
         this.buttons_panel.add(this.create_account);
+        this.panel.add(Box.createRigidArea(new Dimension(5,5)));
+        this.add(new JLabel(new ImageIcon("icons\\bill-taxes.png")));
+        this.panel.add(Box.createRigidArea(new Dimension(5,5)));
         this.panel.add(this.username);
         this.panel.add(Box.createRigidArea(new Dimension(5,5))); // vrem sa aerisim putin
         this.panel.add(this.user);

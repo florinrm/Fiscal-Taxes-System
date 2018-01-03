@@ -42,11 +42,13 @@ public class ChangePassword extends JFrame {
     public ChangePassword () {
         super ("Schimbarea parolei");
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        this.setMinimumSize(new Dimension(400, 400));
+        this.setMinimumSize(new Dimension(600, 400));
         this.setLayout(new FlowLayout());
         this.setIconImage(new ImageIcon("icons\\Apps-preferences-desktop-user-password-icon.png").getImage());
+        this.getContentPane().setBackground(new Color(66, 167, 244));
 
         JPanel panel = new JPanel();
+        panel.setBackground(new Color(66, 167, 244));
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
         panel.setMinimumSize(new Dimension (400, 400));
         JTextField username = new JTextField(25);
@@ -55,23 +57,23 @@ public class ChangePassword extends JFrame {
         JLabel username_info = new JLabel("Numele utilizatorului");
         JLabel old_password_info = new JLabel("Vechea parolă");
         JLabel new_password_info = new JLabel("Noua parolă");
-        JButton change = new JButton("Salvează");
+        JButton change = new JButton("Salvează setările");
         JButton close = new JButton("Închide");
         username_info.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         change.setAlignmentX(JButton.CENTER_ALIGNMENT);
         close.setAlignmentX(JButton.CENTER_ALIGNMENT);
         old_password_info.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         new_password_info.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-        username_info.setFont(new Font("Cambria Math", Font.PLAIN, 15));
-        old_password_info.setFont(new Font("Cambria Math", Font.PLAIN, 15));
-        new_password_info.setFont(new Font("Cambria Math", Font.PLAIN, 15));
-        username.setFont(new Font("Calibri Light", Font.PLAIN, 15));
-        old_password.setFont(new Font("Calibri Light", Font.PLAIN, 15));
-        new_password.setFont(new Font("Calibri Light", Font.PLAIN, 15));
-        change.setFont(new Font("Calibri Light", Font.PLAIN, 15));
-        close.setFont(new Font("Calibri Light", Font.PLAIN, 15));
+        username_info.setFont(new Font("Segoe UI", Font.PLAIN, 20));
+        old_password_info.setFont(new Font("Segoe UI", Font.PLAIN, 20));
+        new_password_info.setFont(new Font("Segoe UI", Font.PLAIN, 20));
+        username.setFont(new Font("Calibri Light", Font.PLAIN, 20));
+        old_password.setFont(new Font("Calibri Light", Font.PLAIN, 20));
+        new_password.setFont(new Font("Calibri Light", Font.PLAIN, 20));
+        change.setFont(new Font("Calibri Light", Font.PLAIN, 20));
+        close.setFont(new Font("Calibri Light", Font.PLAIN, 20));
         this.notification.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-        this.notification.setFont(new Font("Cambria Math", Font.PLAIN, 15));
+        this.notification.setFont(new Font("Segoe UI", Font.PLAIN, 20));
 
         change.addActionListener(new ActionListener() {
             @Override
@@ -145,6 +147,7 @@ public class ChangePassword extends JFrame {
             }
         });
 
+        panel.add(Box.createRigidArea(new Dimension(5,10)));
         panel.add(username_info);
         panel.add(Box.createRigidArea(new Dimension(5,5)));
         panel.add(username);
@@ -156,11 +159,11 @@ public class ChangePassword extends JFrame {
         panel.add(new_password_info);
         panel.add(Box.createRigidArea(new Dimension(5,5)));
         panel.add(new_password);
-        panel.add(Box.createRigidArea(new Dimension(5,5)));
+        panel.add(Box.createRigidArea(new Dimension(5,10)));
         panel.add(change);
         panel.add(Box.createRigidArea(new Dimension(5,10)));
         panel.add(close);
-        panel.add(Box.createRigidArea(new Dimension(5,5)));
+        panel.add(Box.createRigidArea(new Dimension(5,10)));
         panel.add(this.notification);
 
         this.add(panel);

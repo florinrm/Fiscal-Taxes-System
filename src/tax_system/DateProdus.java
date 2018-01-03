@@ -21,9 +21,9 @@ public class DateProdus extends JFrame {
         JScrollPane scroll = new JScrollPane(date);
         scroll.setMaximumSize(new Dimension(400, 300));
         scroll.setVerticalScrollBar(new JScrollBar(JScrollBar.VERTICAL));
-        date.setFont(new Font("Cambria Math", Font.PLAIN, 20));
+        date.setFont(new Font("Segoe UI Light", Font.PLAIN, 20));
         JLabel info = new JLabel("Lista magazinelor unde se găsește produsul");
-        info.setFont(new Font("Cambria Math", Font.PLAIN, 20));
+        info.setFont(new Font("Segoe UI", Font.PLAIN, 20));
         info.setForeground(Color.white);
         info.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         scroll.setAlignmentX(JScrollPane.CENTER_ALIGNMENT);
@@ -49,6 +49,7 @@ public class DateProdus extends JFrame {
                 model1.addElement("\n\n");
             }
         }
+        panel.add(Box.createRigidArea(new Dimension(10,10)));
         panel.add(info);
         panel.add(Box.createRigidArea(new Dimension(10,10)));
         panel.add(scroll);

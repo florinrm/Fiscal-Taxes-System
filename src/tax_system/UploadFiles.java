@@ -54,7 +54,7 @@ public class UploadFiles extends JFrame {
         delete_produs.setFont(new Font("Calibri Light", Font.PLAIN, 20));
         delete_taxe.setFont(new Font("Calibri Light", Font.PLAIN, 20));
         JLabel info = new JLabel();
-        info.setFont(new Font("Cambria Math", Font.PLAIN, 20));
+        info.setFont(new Font("Segoe UI", Font.PLAIN, 20));
 
         delete_produs.addActionListener(new ActionListener() {
             @Override

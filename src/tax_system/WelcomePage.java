@@ -152,12 +152,12 @@ public class WelcomePage extends JFrame {
         super ("Sistem de facturi fiscale");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setBackground(Color.BLUE);
-        this.setMinimumSize(new Dimension(1100, 740));
+        this.setMinimumSize(new Dimension(1100, 800));
         this.getContentPane().setLayout(new BorderLayout(10, 10));
         ImageIcon icon = new ImageIcon("icons\\dollar_icon.jpg");
         this.setIconImage(icon.getImage());
         this.user_info = new JLabel("Sunteți logat ca: " + username);
-        this.user_info.setFont(new Font("Cambria Math", Font.PLAIN, 30));
+        this.user_info.setFont(new Font("Segoe UI Light", Font.PLAIN, 30));
         this.user_info.setForeground(Color.white);
         this.info1 = new JPanel();
         this.info1.setBackground(new Color(104, 11, 31));
@@ -240,11 +240,11 @@ public class WelcomePage extends JFrame {
         delete_produs.setFont(new Font("Calibri Light", Font.PLAIN, 20));
         delete_taxe.setFont(new Font("Calibri Light", Font.PLAIN, 20));
         JLabel info = new JLabel("                                 ");
-        info.setFont(new Font("Cambria Math", Font.PLAIN, 20));
+        info.setFont(new Font("Segoe UI", Font.PLAIN, 20));
         JLabel imgLabel = new JLabel(new ImageIcon("icons\\database-image.png"));
 
         JLabel some_space = new JLabel("Încărcați sau ștergeți fișierele de procesat");
-        some_space.setFont(new Font("Cambria Math", Font.PLAIN, 20));
+        some_space.setFont(new Font("Segoe UI", Font.PLAIN, 20));
 
         delete_produs.addActionListener(new ActionListener() {
             @Override
@@ -464,33 +464,33 @@ public class WelcomePage extends JFrame {
 
         Magazin maximum_maga = getMagazinMaximum(list_magazine);
         JLabel header1 = new JLabel("Magazinul cu cele mai mari vânzări");
-        header1.setFont(new Font("Cambria Math", Font.PLAIN, 20));
+        header1.setFont(new Font("Segoe UI Light", Font.PLAIN, 20));
         JLabel nume_magazin1 = new JLabel("Nume: " + maximum_maga.nume);
-        nume_magazin1.setFont(new Font("Cambria Math", Font.PLAIN, 20));
+        nume_magazin1.setFont(new Font("Segoe UI Light", Font.PLAIN, 20));
         JLabel total_fara_taxe1 = new JLabel("Totalul fără taxe: "
                 + df.format(maximum_maga.getTotalFaraTaxe()).replaceAll(",", "."));
-        total_fara_taxe1.setFont(new Font("Cambria Math", Font.PLAIN, 20));
+        total_fara_taxe1.setFont(new Font("Segoe UI Light", Font.PLAIN, 20));
         JLabel total_cu_taxe1 = new JLabel("Totalul cu taxe: "
                 + df.format(maximum_maga.getTotalCuTaxe()).replaceAll(",", "."));
-        total_cu_taxe1.setFont(new Font("Cambria Math", Font.PLAIN, 20));
+        total_cu_taxe1.setFont(new Font("Segoe UI Light", Font.PLAIN, 20));
         JLabel total_cu_taxe_scutite1 = new JLabel("Totalul cu taxe scutite: "
                 + df.format(maximum_maga.getTotalCuTaxeScutite()).replaceAll(",", "."));
-        total_cu_taxe_scutite1.setFont(new Font("Cambria Math", Font.PLAIN, 20));
+        total_cu_taxe_scutite1.setFont(new Font("Segoe UI Light", Font.PLAIN, 20));
 
         Factura max_factura = getFacturaMaxim(list_magazine);
         JLabel factura_header = new JLabel ("Factura cu suma totală cea mai mare");
-        factura_header.setFont(new Font("Cambria Math", Font.PLAIN, 20));
+        factura_header.setFont(new Font("Segoe UI Light", Font.PLAIN, 20));
         JLabel nume_factura = new JLabel ("Nume factură: " + max_factura.denumire);
-        nume_factura.setFont(new Font("Cambria Math", Font.PLAIN, 20));
+        nume_factura.setFont(new Font("Segoe UI Light", Font.PLAIN, 20));
         JLabel prov_factura = new JLabel ("Magazin de proveniență: "
                 + searchFactura(list_magazine, max_factura).nume);
-        prov_factura.setFont(new Font("Cambria Math", Font.PLAIN, 20));
+        prov_factura.setFont(new Font("Segoe UI Light", Font.PLAIN, 20));
         JLabel total_fara_taxe_factura = new JLabel("Totalul fără taxe: "
                 + df.format(max_factura.getTotalFaraTaxe()).replaceAll(",", "."));
-        total_fara_taxe_factura.setFont(new Font("Cambria Math", Font.PLAIN, 20));
+        total_fara_taxe_factura.setFont(new Font("Segoe UI Light", Font.PLAIN, 20));
         JLabel total_cu_taxe_factura = new JLabel("Totalul cu taxe: "
                 + df.format(max_factura.getTotalCuTaxe()).replaceAll(",", "."));
-        total_cu_taxe_factura.setFont(new Font("Cambria Math", Font.PLAIN, 20));
+        total_cu_taxe_factura.setFont(new Font("Segoe UI Light", Font.PLAIN, 20));
 
         box_panel1.add(header1);
         box_panel1.add(Box.createRigidArea(new Dimension(10,5)));
@@ -518,7 +518,7 @@ public class WelcomePage extends JFrame {
 
         DefaultListModel<String> model1 = new DefaultListModel<>();
         JList<String> list_countries = new JList<>(model1);
-        list_countries.setFont(new Font("Cambria Math", Font.PLAIN, 20));
+        list_countries.setFont(new Font("Segoe UI Light", Font.PLAIN, 20));
         list_countries.setVisibleRowCount(15);
         list_countries.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane scrolling_countries = new JScrollPane(list_countries);
@@ -541,7 +541,7 @@ public class WelcomePage extends JFrame {
 
         DefaultListModel<String> model2 = new DefaultListModel<>();
         JList<String> list_categorii = new JList<>(model2);
-        list_categorii.setFont(new Font("Cambria Math", Font.PLAIN, 20));
+        list_categorii.setFont(new Font("Segoe UI Light", Font.PLAIN, 20));
         list_categorii.setVisibleRowCount(15);
         list_categorii.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane scrolling_categorii = new JScrollPane(list_categorii);
@@ -578,7 +578,7 @@ public class WelcomePage extends JFrame {
         panel3.setLayout(new BoxLayout(panel3, BoxLayout.X_AXIS));
         panel3.setBackground(new Color(22, 122, 72));
         JScrollPane scrolling = new JScrollPane(list1);
-        list1.setFont(new Font("Cambria Math", Font.PLAIN, 20));
+        list1.setFont(new Font("Segoe UI Light", Font.PLAIN, 20));
         scrolling.setMaximumSize(new Dimension(300, 500));
         scrolling.setVerticalScrollBar(new JScrollBar(JScrollBar.VERTICAL));
         Collections.sort(list_produse, new Comparator<Produs>() {
@@ -605,7 +605,7 @@ public class WelcomePage extends JFrame {
         minipanel1.setMinimumSize(new Dimension(300, 630));
         String[] options = {"După denumire", "După țară"};
         JLabel criteriu = new JLabel("Alege criteriul de sortare");
-        criteriu.setFont(new Font("Cambria Math", Font.PLAIN, 15));
+        criteriu.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         criteriu.setForeground(Color.WHITE);
         criteriu.setAlignmentX(JLabel.LEFT_ALIGNMENT);
         JComboBox<String> list_options = new JComboBox<>(options);
@@ -658,15 +658,15 @@ public class WelcomePage extends JFrame {
                 }
             }
         });
-        JLabel check_if_prod_adaugat = new JLabel("");
-        check_if_prod_adaugat.setFont(new Font("Cambria Math", Font.PLAIN, 15));
-        JLabel check_if_prod_sters = new JLabel("");
-        check_if_prod_sters.setFont(new Font("Cambria Math", Font.PLAIN, 15));
+        JLabel check_if_prod_adaugat = new JLabel("      ");
+        check_if_prod_adaugat.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+        JLabel check_if_prod_sters = new JLabel("        ");
+        check_if_prod_sters.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         JLabel text1 = new JLabel ("Adaugă numele produsului:");
         text1.setForeground(Color.WHITE);
-        text1.setFont(new Font("Cambria Math", Font.PLAIN, 15));
+        text1.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         JLabel text2 = new JLabel ("Adaugă prețul produsului:");
-        text2.setFont(new Font("Cambria Math", Font.PLAIN, 15));
+        text2.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         text2.setForeground(Color.WHITE);
         JComboBox<String> alege_categoria = new JComboBox<>(new Vector<>(parsing.categoriiProduse));
         alege_categoria.setFont(new Font("Calibri Light", Font.PLAIN, 15));
@@ -675,9 +675,9 @@ public class WelcomePage extends JFrame {
         alege_tara.setFont(new Font("Calibri Light", Font.PLAIN, 15));
         alege_tara.setMaximumSize(new Dimension(120, 20));
         JTextField alege_produs = new JTextField(20);
-        alege_produs.setFont(new Font("Cambria Math", Font.PLAIN, 15));
+        alege_produs.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         JTextField alege_pret = new JTextField(15);
-        alege_pret.setFont(new Font("Cambria Math", Font.PLAIN, 15));
+        alege_pret.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         JButton adauga = new JButton("Adaugă produs");
         adauga.setFont(new Font("Calibri Light", Font.PLAIN, 15));
         JButton sterge = new JButton("Șterge produs");
@@ -928,8 +928,8 @@ public class WelcomePage extends JFrame {
                 }
             }
         });
-        JLabel check_if_produs_exista = new JLabel();
-        check_if_produs_exista.setFont(new Font("Cambria Math", Font.PLAIN, 15));
+        JLabel check_if_produs_exista = new JLabel("            ");
+        check_if_produs_exista.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         cauta.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -955,18 +955,18 @@ public class WelcomePage extends JFrame {
             }
         });
         JPanel editare_produs = new JPanel();
-        editare_produs.setMaximumSize(new Dimension(300, 100));
+        editare_produs.setMaximumSize(new Dimension(300, 120));
         editare_produs.setBackground(new Color(22, 122, 72));
         JLabel text3 = new JLabel ("Adaugă numele nou al produsului:");
         text3.setForeground(Color.WHITE);
-        text3.setFont(new Font("Cambria Math", Font.PLAIN, 15));
+        text3.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         JLabel text4 = new JLabel ("Adaugă prețul nou al produsului:");
         text4.setForeground(Color.WHITE);
-        text4.setFont(new Font("Cambria Math", Font.PLAIN, 15));
+        text4.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         JTextField editare_nume = new JTextField(20);
-        editare_nume.setFont(new Font("Cambria Math", Font.PLAIN, 15));
+        editare_nume.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         JTextField editare_pret = new JTextField(15);
-        editare_pret.setFont(new Font("Cambria Math", Font.PLAIN, 15));
+        editare_pret.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         editare_produs.setLayout(new BoxLayout(editare_produs, BoxLayout.PAGE_AXIS));
         JPanel first_line_edit = new JPanel();
         JPanel second_line_edit = new JPanel();
@@ -983,8 +983,8 @@ public class WelcomePage extends JFrame {
         editare_produs.add(first_line_edit);
         editare_produs.add(second_line_edit);
 
-        JLabel edit_result = new JLabel();
-        edit_result.setFont(new Font("Cambria Math", Font.PLAIN, 15));
+        JLabel edit_result = new JLabel("             ");
+        edit_result.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         editeaza.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
