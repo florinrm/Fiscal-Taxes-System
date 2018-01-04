@@ -8,7 +8,7 @@
 
 	A se loga cu:
 	username: florin.mihalache
-	parola: muiedragnea
+	parola: 69420
 
 	In cadrul acestei teme, am implementat urmatoarele clase:
 
