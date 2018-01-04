@@ -11,6 +11,7 @@ import java.nio.file.Files;
 public class UploadFiles extends JFrame {
 
     public String username;
+    public String password;
 
     public boolean checkFiles () {
         File folder = new File (".");
@@ -27,21 +28,23 @@ public class UploadFiles extends JFrame {
         return (count == 3);
     }
 
-    public UploadFiles (String username) {
+    public UploadFiles (String username, String password) {
         super ("Încărcare de fișiere");
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         this.setForeground(Color.orange);
-        this.setMinimumSize(new Dimension(400, 400));
+        this.setMinimumSize(new Dimension(400, 500));
         this.setLayout(new FlowLayout());
         this.setIconImage(new ImageIcon("icons\\file_upload_icon.png").getImage());
         this.username = username;
+        this.password = password;
+        this.getContentPane().setBackground(Color.PINK);
         JPanel panel2 = new JPanel ();
         panel2.setLayout(new BoxLayout(panel2, BoxLayout.Y_AXIS));
         //panel2.setLayout(new GridLayout());
         panel2.setMinimumSize(new Dimension(400, 400));
         JButton produs = new JButton("Încarcă produse.txt");
         JButton taxe = new JButton("Încarcă taxe.txt");
-        JButton facturi = new JButton("Încarcă facturi.txti");
+        JButton facturi = new JButton("Încarcă facturi.txt");
         JButton start = new JButton ("Start aplicație!");
         JButton delete_produs = new JButton("Șterge produse.txt");
         JButton delete_taxe = new JButton("Șterge taxe.txt");
@@ -53,7 +56,7 @@ public class UploadFiles extends JFrame {
         delete_facturi.setFont(new Font("Calibri Light", Font.PLAIN, 20));
         delete_produs.setFont(new Font("Calibri Light", Font.PLAIN, 20));
         delete_taxe.setFont(new Font("Calibri Light", Font.PLAIN, 20));
-        JLabel info = new JLabel();
+        JLabel info = new JLabel("                           ");
         info.setFont(new Font("Segoe UI", Font.PLAIN, 20));
 
         delete_produs.addActionListener(new ActionListener() {
@@ -64,6 +67,7 @@ public class UploadFiles extends JFrame {
                     File file = new File ("produse.txt");
                     if (file.exists()) {
                         file.delete();
+                        info.setForeground(new Color(22, 122, 72));
                         info.setText("produse.txt șters");
                     }
                 }
@@ -77,6 +81,7 @@ public class UploadFiles extends JFrame {
                     File file = new File ("taxe.txt");
                     if (file.exists()) {
                         file.delete();
+                        info.setForeground(new Color(22, 122, 72));
                         info.setText("taxe.txt șters");
                     }
                 }
@@ -90,6 +95,7 @@ public class UploadFiles extends JFrame {
                     File file = new File ("facturi.txt");
                     if (file.exists()) {
                         file.delete();
+                        info.setForeground(new Color(22, 122, 72));
                         info.setText("facturi.txt șters");
                     }
                 }
@@ -118,6 +124,8 @@ public class UploadFiles extends JFrame {
                         }
                         try {
                             Files.copy(file.toPath(), new File ("produse.txt").toPath());
+                            info.setForeground(new Color(22, 122, 72));
+                            info.setText("Fișierul produse.txt adăugat!");
                         } catch (IOException e1) {
                             e1.printStackTrace();
                         }
@@ -147,6 +155,8 @@ public class UploadFiles extends JFrame {
                         }
                         try {
                             Files.copy(file.toPath(), new File ("taxe.txt").toPath());
+                            info.setForeground(new Color(22, 122, 72));
+                            info.setText("Fișierul taxe.txt adăugat!");
                         } catch (IOException e1) {
                             e1.printStackTrace();
                         }
@@ -177,6 +187,8 @@ public class UploadFiles extends JFrame {
                         }
                         try {
                             Files.copy(file.toPath(), new File ("facturi.txt").toPath());
+                            info.setForeground(new Color(22, 122, 72));
+                            info.setText("Fișierul facturi.txt adăugat!");
                         } catch (IOException e1) {
                             e1.printStackTrace();
                         }
@@ -194,7 +206,7 @@ public class UploadFiles extends JFrame {
                 JButton button = (JButton) e.getSource();
                 if (button.getText().equals(start.getText())) {
                     if (checkFiles()) {
-                        new WelcomePage(username);
+                        new WelcomePage(username, password);
                         dispose();
                         setVisible(false);
                     }
@@ -222,7 +234,7 @@ public class UploadFiles extends JFrame {
         panel2.add(start);
         panel2.add(Box.createRigidArea(new Dimension(5,10)));
         panel2.add(info);
-        this.setContentPane(panel2);
+        this.add(panel2);
         this.pack();
         this.setResizable(false);
         this.setVisible(true);

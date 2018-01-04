@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.TreeSet;
 import java.util.Vector;
 
+@SuppressWarnings("all")
 public abstract class Magazin implements IMagazin, Comparable<Magazin> {
     public String nume;
     public Vector<Factura> facturi;

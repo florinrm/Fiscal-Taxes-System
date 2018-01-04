@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.TreeSet;
 import java.util.Vector;
 
+@SuppressWarnings("all")
 public class Factura implements Comparable <Factura> {
     public String denumire;
     public Vector<ProdusComandat> lista_produse;

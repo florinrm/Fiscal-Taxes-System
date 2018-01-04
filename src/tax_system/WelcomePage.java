@@ -5,16 +5,15 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.util.*;
 
+@SuppressWarnings("all")
 public class WelcomePage extends JFrame {
     private JLabel user_info;
+    private String user_pass;
     private JPanel info1;
     private JPanel info2;
     private JTabbedPane tabs;
@@ -107,7 +106,7 @@ public class WelcomePage extends JFrame {
         return 0;
     }
 
-    public void updateProduseFile (Vector<Produs> list, TreeSet<String> lista_tari) {
+    public void updateProduseFile (Vector<Produs> list, TreeSet<String> lista_tari) throws IOException {
         ArrayList<String> countries = new ArrayList<>(lista_tari);
         try {
             System.setOut(new PrintStream(new File("produse.txt")));
@@ -128,27 +127,29 @@ public class WelcomePage extends JFrame {
                         return (-1) * o1.getCategorie().compareTo(o2.getCategorie());
                 }
             });
+            PrintWriter pw = new PrintWriter(new FileWriter("out.txt"));
             for (int i = 0; i < list.size(); i = i + no_countries) {
-                System.out.print(list.get(i).getDenumire() + " " + list.get(i).getCategorie() + " ");
+                pw.print(list.get(i).getDenumire() + " " + list.get(i).getCategorie() + " ");
                 for (int j = 0; j < no_countries; ++j) {
                     if (j == no_countries - 1)
                     {
                         if (i == list.size() - 1)
-                            System.out.print (findPret(list, list.get(i).getDenumire(), countries.get(j), list.get(i).getCategorie()));
+                            pw.print (findPret(list, list.get(i).getDenumire(), countries.get(j), list.get(i).getCategorie()));
                         else
-                            System.out.print (findPret(list, list.get(i).getDenumire(), countries.get(j), list.get(i).getCategorie()) + "\n");
+                            pw.print (findPret(list, list.get(i).getDenumire(), countries.get(j), list.get(i).getCategorie()) + "\n");
                     }
                     else
-                        System.out.print (findPret(list, list.get(i).getDenumire(), countries.get(j), list.get(i).getCategorie()) + " ");
+                        pw.print (findPret(list, list.get(i).getDenumire(), countries.get(j), list.get(i).getCategorie()) + " ");
                 }
             }
+            pw.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        System.setOut(System.out);
+        //System.setOut(System.out);
     }
 
-    public WelcomePage (String username) {
+    public WelcomePage (String username, String parola) {
         super ("Sistem de facturi fiscale");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setBackground(Color.BLUE);
@@ -198,9 +199,23 @@ public class WelcomePage extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 JButton button = (JButton) e.getSource();
                 if (button.getText().equals(logout.getText())) {
-                    new AppStart();
+                    new AppStart("", "");
                     setVisible(false);
                     dispose();
+                }
+            }
+        });
+        JButton restart = new JButton("Restart");
+        restart.setAlignmentX(JButton.CENTER_ALIGNMENT);
+        restart.setFont(new Font("Calibri Light", Font.PLAIN, 20));
+        restart.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JButton button = (JButton) e.getSource();
+                if (button.getText().equals(restart.getText())) {
+                    new AppStart(username, parola);
+                    dispose();
+                    setVisible(false);
                 }
             }
         });
@@ -209,6 +224,8 @@ public class WelcomePage extends JFrame {
         login_box.add(button_panel);
         login_box.add(Box.createRigidArea(new Dimension(10,10)));
         login_box.add(close);
+        login_box.add(Box.createRigidArea(new Dimension(10,10)));
+        login_box.add(restart);
         this.info1.add(Box.createRigidArea(new Dimension(10,10)));
         this.info1.add(login_box);
 
@@ -243,8 +260,37 @@ public class WelcomePage extends JFrame {
         info.setFont(new Font("Segoe UI", Font.PLAIN, 20));
         JLabel imgLabel = new JLabel(new ImageIcon("icons\\database-image.png"));
 
-        JLabel some_space = new JLabel("Încărcați sau ștergeți fișierele de procesat");
+        JLabel some_space = new JLabel("Încărcați sau ștergeți fișierele de procesat.");
+        JLabel some_space_2 = new JLabel("Dacă există un fișier ce nu poate fi șters, închideți aplicația și apoi o reporniți");
         some_space.setFont(new Font("Segoe UI", Font.PLAIN, 20));
+        some_space_2.setFont(new Font("Segoe UI", Font.PLAIN, 20));
+
+        DefaultListModel<String> model_produse = new DefaultListModel<>();
+        JList<String> list1 = new JList<>(model_produse);
+        list1.setVisibleRowCount(5);
+        list1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane scrolling = new JScrollPane(list1);
+        list1.setFont(new Font("Segoe UI Light", Font.PLAIN, 20));
+        scrolling.setMaximumSize(new Dimension(300, 500));
+        scrolling.setVerticalScrollBar(new JScrollBar(JScrollBar.VERTICAL));
+        Collections.sort(list_produse, new Comparator<Produs>() {
+            @Override
+            public int compare(Produs o1, Produs o2) {
+                if (o1.getCategorie().equals(o2.getCategorie()))
+                    return (-1) * o1.getDenumire().compareTo(o2.getDenumire());
+                else
+                    return (-1) * o1.getCategorie().compareTo(o2.getCategorie());
+            }
+        });
+        for (int i = 0; i < list_produse.size(); ++i) {
+            if (! new Double (list_produse.get(i).getPret()).equals(new Double(0))) {
+                model_produse.addElement("Nume: " + list_produse.get(i).getDenumire());
+                model_produse.addElement("Categorie: " + list_produse.get(i).getCategorie());
+                model_produse.addElement("Țară origine: " + list_produse.get(i).getTaraOrigine());
+                model_produse.addElement("Preț: " + list_produse.get(i).getPret());
+                model_produse.addElement("\n");
+            }
+        }
 
         delete_produs.addActionListener(new ActionListener() {
             @Override
@@ -254,10 +300,15 @@ public class WelcomePage extends JFrame {
                     File file = new File ("produse.txt");
                     if (file.exists()) {
                         file.delete();
-                        info.setForeground(new Color(22, 122, 72));
-                        info.setText("produse.txt șters");
-                        tabs.setEnabledAt(3, false);
-                        tabs.setEnabledAt(2, false);
+                        if (file.exists()) {
+                            info.setForeground(new Color(22, 122, 72));
+                            info.setText("produse.txt nu poate fi șters.");
+                        } else {
+                            info.setForeground(new Color(22, 122, 72));
+                            info.setText("produse.txt șters");
+                            tabs.setEnabledAt(3, false);
+                            tabs.setEnabledAt(2, false);
+                        }
                     } else {
                         info.setForeground(new Color(186, 26, 63));
                         info.setText("Fișierul nu există!");
@@ -272,10 +323,15 @@ public class WelcomePage extends JFrame {
                 if (button.getText().equals(delete_taxe.getText())) {
                     File file = new File ("taxe.txt");
                     if (file.exists()) {
-                        file.delete();
-                        info.setForeground(new Color(22, 122, 72));
-                        info.setText("taxe.txt șters");
-                        tabs.setEnabledAt(3, false);
+                            file.delete();
+                            if (file.exists()) {
+                                info.setForeground(new Color(186, 26, 63));
+                                info.setText("taxe.txt nu poate fi sters");
+                            } else {
+                                info.setForeground(new Color(22, 122, 72));
+                                info.setText("taxe.txt șters");
+                                tabs.setEnabledAt(3, false);
+                            }
                     } else {
                         info.setForeground(new Color(186, 26, 63));
                         info.setText("Fișierul nu există!");
@@ -326,8 +382,28 @@ public class WelcomePage extends JFrame {
                         try {
                             Files.copy(file.toPath(), new File ("produse.txt").toPath());
                             Vector<Produs> copy_list = parsing.getListProdus("produse.txt");
+                            info.setForeground(new Color(22, 122, 72));
+                            info.setText("Fișierul produse.txt adăugat!");
                             list_produse.removeAll(list_produse);
                             list_produse.addAll(copy_list);
+                            Collections.sort(list_produse, new Comparator<Produs>() {
+                                @Override
+                                public int compare(Produs o1, Produs o2) {
+                                    if (o1.getCategorie().equals(o2.getCategorie()))
+                                        return (-1) * o1.getDenumire().compareTo(o2.getDenumire());
+                                    else
+                                        return (-1) * o1.getCategorie().compareTo(o2.getCategorie());
+                                }
+                            });
+                            for (int i = 0; i < list_produse.size(); ++i) {
+                                if (! new Double (list_produse.get(i).getPret()).equals(new Double(0))) {
+                                    model_produse.addElement("Nume: " + list_produse.get(i).getDenumire());
+                                    model_produse.addElement("Categorie: " + list_produse.get(i).getCategorie());
+                                    model_produse.addElement("Țară origine: " + list_produse.get(i).getTaraOrigine());
+                                    model_produse.addElement("Preț: " + list_produse.get(i).getPret());
+                                    model_produse.addElement("\n");
+                                }
+                            }
                         } catch (IOException e1) {
                             e1.printStackTrace();
                         }
@@ -363,6 +439,8 @@ public class WelcomePage extends JFrame {
                         }
                         try {
                             Files.copy(file.toPath(), new File ("taxe.txt").toPath());
+                            info.setForeground(new Color(22, 122, 72));
+                            info.setText("Fișierul taxe.txt adăugat!");
                         } catch (IOException e1) {
                             e1.printStackTrace();
                         }
@@ -396,6 +474,8 @@ public class WelcomePage extends JFrame {
                         }
                         try {
                             Files.copy(file.toPath(), new File ("facturi.txt").toPath());
+                            info.setForeground(new Color(22, 122, 72));
+                            info.setText("Fișierul facturi.txt adăugat!");
                         } catch (IOException e1) {
                             e1.printStackTrace();
                         }
@@ -430,6 +510,7 @@ public class WelcomePage extends JFrame {
         button_box.setBackground(Color.pink);
         // button_box.add(Box.createRigidArea(new Dimension(5,10)));
         button_box.add(some_space);
+        button_box.add(some_space_2);
         button_box.add(Box.createRigidArea(new Dimension(5,10)));
         button_box.add(produs);
         button_box.add(Box.createRigidArea(new Dimension(5,10)));
@@ -447,14 +528,14 @@ public class WelcomePage extends JFrame {
         button_box.add(Box.createRigidArea(new Dimension(5,10)));
         button_box.add(info);
         button_box.add(Box.createRigidArea(new Dimension(5,60)));
-        panel2.add(Box.createRigidArea(new Dimension(50,10)));
+        panel2.add(Box.createRigidArea(new Dimension(120,10)));
         panel2.add(button_box);
         panel2.add(Box.createRigidArea(new Dimension(120,10)));
         panel2.add(imgLabel);
 
         JPanel panel4 = new JPanel();
         panel4.setBackground(new Color(66, 143, 244));
-        panel4.setLayout(new BoxLayout(panel4, BoxLayout.X_AXIS));
+        panel4.setLayout(new BoxLayout(panel4, BoxLayout.PAGE_AXIS));
         JPanel box_panel1 = new JPanel();
         box_panel1.setBackground(Color.WHITE);
         box_panel1.setLayout(new BoxLayout(box_panel1, BoxLayout.Y_AXIS));
@@ -561,44 +642,30 @@ public class WelcomePage extends JFrame {
                     + df.format(magazin_categorie.getTotalCuTaxeScutite()).replaceAll(",", "."));
             model2.addElement("\n\n");
         }
+        JPanel another_panel = new JPanel();
+        another_panel.setBackground(new Color(66, 143, 244));
+        another_panel.setLayout(new BoxLayout(another_panel, BoxLayout.X_AXIS));
+        another_panel.add(Box.createRigidArea(new Dimension(30,10)));
+        another_panel.add(box_panel1);
+        another_panel.add(Box.createRigidArea(new Dimension(30,10)));
+        another_panel.add(scrolling_countries);
+        another_panel.add(Box.createRigidArea(new Dimension(30,10)));
+        another_panel.add(scrolling_categorii);
+        another_panel.add(Box.createRigidArea(new Dimension(30,10)));
 
-        panel4.add(Box.createRigidArea(new Dimension(30,10)));
-        panel4.add(box_panel1);
-        panel4.add(Box.createRigidArea(new Dimension(30,10)));
-        panel4.add(scrolling_countries);
-        panel4.add(Box.createRigidArea(new Dimension(30,10)));
-        panel4.add(scrolling_categorii);
-        panel4.add(Box.createRigidArea(new Dimension(30,10)));
+        JLabel maga_info = new JLabel ("Statistica magazinelor");
+        maga_info.setFont(new Font("Segoe UI Light", Font.PLAIN, 50));
+        maga_info.setForeground(Color.white);
+        maga_info.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+
+        panel4.add(Box.createRigidArea(new Dimension(30,30)));
+        panel4.add(maga_info);
+        panel4.add(Box.createRigidArea(new Dimension(40,40)));
+        panel4.add(another_panel);
 
         JPanel panel3 = new JPanel();
-        DefaultListModel<String> model_produse = new DefaultListModel<>();
-        JList<String> list1 = new JList<>(model_produse);
-        list1.setVisibleRowCount(5);
-        list1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         panel3.setLayout(new BoxLayout(panel3, BoxLayout.X_AXIS));
         panel3.setBackground(new Color(22, 122, 72));
-        JScrollPane scrolling = new JScrollPane(list1);
-        list1.setFont(new Font("Segoe UI Light", Font.PLAIN, 20));
-        scrolling.setMaximumSize(new Dimension(300, 500));
-        scrolling.setVerticalScrollBar(new JScrollBar(JScrollBar.VERTICAL));
-        Collections.sort(list_produse, new Comparator<Produs>() {
-            @Override
-            public int compare(Produs o1, Produs o2) {
-                if (o1.getCategorie().equals(o2.getCategorie()))
-                    return (-1) * o1.getDenumire().compareTo(o2.getDenumire());
-                else
-                    return (-1) * o1.getCategorie().compareTo(o2.getCategorie());
-            }
-        });
-        for (int i = 0; i < list_produse.size(); ++i) {
-            if (! new Double (list_produse.get(i).getPret()).equals(new Double(0))) {
-                model_produse.addElement("Nume: " + list_produse.get(i).getDenumire());
-                model_produse.addElement("Categorie: " + list_produse.get(i).getCategorie());
-                model_produse.addElement("Țară origine: " + list_produse.get(i).getTaraOrigine());
-                model_produse.addElement("Preț: " + list_produse.get(i).getPret());
-                model_produse.addElement("\n");
-            }
-        }
         JPanel minipanel1 = new JPanel();
         minipanel1.setBackground(new Color(22, 122, 72));
         minipanel1.setLayout(new BoxLayout(minipanel1, BoxLayout.Y_AXIS));
@@ -811,7 +878,11 @@ public class WelcomePage extends JFrame {
                                         + df.format(magazin_categorie.getTotalCuTaxeScutite()).replaceAll(",", "."));
                                 model2.addElement("\n\n");
                             }
-                            updateProduseFile(list_produse, parsing.tariOrigine);
+                            try {
+                                updateProduseFile(list_produse, parsing.tariOrigine);
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
                         } else {
                             check_if_prod_adaugat.setText("Produsul deja există!");
                             check_if_prod_adaugat.setForeground(new Color(186, 26, 63));
@@ -858,7 +929,11 @@ public class WelcomePage extends JFrame {
                             }
                             if (to_be_deleted.size() == parsing.tariOrigine.size())
                                 list_produse.removeAll(to_be_deleted);
-                            updateProduseFile(list_produse, parsing.tariOrigine);
+                            try {
+                                updateProduseFile(list_produse, parsing.tariOrigine);
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
                             model_produse.removeAllElements();
                             for (int i = 0; i < list_produse.size(); ++i) {
                                 if (! new Double (list_produse.get(i).getPret()).equals(new Double(0))) {
@@ -869,8 +944,18 @@ public class WelcomePage extends JFrame {
                                     model_produse.addElement("\n");
                                 }
                             }
-                            ArrayList <Magazin> list_magazine = parsing.getMagazine("facturi.txt", list_produse, map);
-
+                            //ArrayList <Magazin> list_magazine = parsing.getMagazine("facturi.txt", list_produse, map);
+                            for (Magazin magazin: list_magazine) {
+                                for (Factura factura: magazin.facturi) {
+                                    for (ProdusComandat prod: factura.lista_produse) {
+                                        if (prod.getProdus().getDenumire().equals(denumire_produs)
+                                                && prod.getProdus().getCategorie().equals(categorie_produs)
+                                                && prod.getProdus().getTaraOrigine().equals(tara_produs)) {
+                                            factura.lista_produse.remove(prod);
+                                            }
+                                        }
+                                    }
+                                }
                             Magazin maximum_maga = getMagazinMaximum(list_magazine);
                             nume_magazin1.setText("Nume: " + maximum_maga.nume);
                             total_fara_taxe1.setText("Totalul fără taxe: "
@@ -1011,7 +1096,11 @@ public class WelcomePage extends JFrame {
                                         list_produse.get(i).setPret(final_price);
                                     edit_result.setText("Produsul a fost editat!");
                                     edit_result.setForeground(Color.BLACK);
-                                    updateProduseFile(list_produse, parsing.tariOrigine);
+                                    try {
+                                        updateProduseFile(list_produse, parsing.tariOrigine);
+                                    } catch (IOException e1) {
+                                        e1.printStackTrace();
+                                    }
                                 }
                             }
                             model_produse.removeAllElements();
@@ -1024,7 +1113,22 @@ public class WelcomePage extends JFrame {
                                     model_produse.addElement("\n");
                                 }
                             }
-                            ArrayList <Magazin> list_magazine = parsing.getMagazine("facturi.txt", list_produse, map);
+                            //ArrayList <Magazin> list_magazine = parsing.getMagazine("facturi.txt", list_produse, map);
+
+                            for (Magazin magazin: list_magazine) {
+                                for (Factura factura: magazin.facturi) {
+                                    for (ProdusComandat prod: factura.lista_produse) {
+                                        if (prod.getProdus().getDenumire().equals(original_denumire)
+                                                && prod.getProdus().getCategorie().equals(categorie)) {
+                                            prod.getProdus().setDenumire(final_denumire);
+                                            if (prod.getProdus().getTaraOrigine().equals(tara)
+                                                    && new Double (prod.getProdus().getPret()).equals(first_price)) {
+                                                prod.getProdus().setPret(final_price);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
 
                             Magazin maximum_maga = getMagazinMaximum(list_magazine);
                             nume_magazin1.setText("Nume: " + maximum_maga.nume);

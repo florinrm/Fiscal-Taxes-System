@@ -18,9 +18,11 @@ public class Main {
         obj.setTaxes(map);
         obj.setTipuriMagazine(tipuriMagazine);
         try {
-            System.setOut(new PrintStream(new File("out.txt")));
-            System.out.println(obj);
-            System.setOut(System.out);
+            PrintWriter pw = new PrintWriter(new FileWriter("out.txt"));
+            pw.write(obj.toString());
+            pw.close();
+            //System.out.println(obj);
+            //System.setOut(System.out);
         } catch (IOException e) {
             e.printStackTrace();
         }

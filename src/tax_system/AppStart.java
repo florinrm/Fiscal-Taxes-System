@@ -115,6 +115,7 @@ public class AppStart extends JFrame {
             succeded.setText("Completați toate câmpurile!");
             return;
         }
+        String original = password;
         password = encypherPassword(password); // criptare
         Scanner scan = null;
         try {
@@ -128,9 +129,9 @@ public class AppStart extends JFrame {
                         succeded.setForeground(new Color(22, 122, 72));
                         succeded.setText("Logare efectuată cu succes!");
                         if (checkFiles())
-                            new WelcomePage(data[0]); // aplicatie
+                            new WelcomePage(data[0], original); // aplicatie
                         else
-                            new UploadFiles(data[0]); // daca nu-s toate fisierele, le incarcam
+                            new UploadFiles(data[0], data[1]); // daca nu-s toate fisierele, le incarcam
                         setVisible(false); //you can't see me!
                         dispose();
                         return;
@@ -166,7 +167,7 @@ public class AppStart extends JFrame {
     }
 
 
-    public AppStart () {
+    public AppStart (String username, String password) {
         super ("Logare cont");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setMinimumSize(new Dimension(600, 600));
@@ -174,9 +175,11 @@ public class AppStart extends JFrame {
         this.getContentPane().setBackground(new Color(66, 167, 244));
 
         this.user = new JTextField(25);
+        this.user.setText(username);
         this.panel = new JPanel();
         this.panel.setBackground(new Color(66, 167, 244));
         this.pass = new JPasswordField(25);
+        this.pass.setText(password);
         this.username = new JLabel("Utilizator", JLabel.CENTER);
         this.password = new JLabel("Parolă", JLabel.CENTER);
         this.username.setAlignmentX(JLabel.CENTER_ALIGNMENT);
@@ -247,7 +250,7 @@ public class AppStart extends JFrame {
         this.panel.add(this.password);
         this.panel.add(Box.createRigidArea(new Dimension(5,5)));
         this.panel.add(this.pass);
-        this.panel.add(Box.createRigidArea(new Dimension(5,5)));
+        this.panel.add(Box.createRigidArea(new Dimension(5,15)));
         this.panel.add(this.buttons_panel);
         this.panel.add(Box.createRigidArea(new Dimension(5,5)));
         this.panel.add(this.change_password);
@@ -268,7 +271,7 @@ public class AppStart extends JFrame {
                 | IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
         }
-        new AppStart();
+        new AppStart("", "");
     }
 }
 
