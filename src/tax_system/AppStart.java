@@ -188,6 +188,8 @@ public class AppStart extends JFrame {
         this.password.setFont(new Font("Segoe UI", Font.PLAIN, 20));
         this.pass.setFont(new Font("Calibri Light", Font.PLAIN, 20));
         this.user.setFont(new Font("Calibri Light", Font.PLAIN, 20));
+        this.username.setForeground(Color.white);
+        this.password.setForeground(Color.white);
         this.login_button = new JButton ("Logare");
         this.create_account = new JButton("Creează cont nou");
         this.change_password = new JButton("Schimbați parola");

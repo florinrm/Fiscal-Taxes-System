@@ -57,6 +57,9 @@ public class ChangePassword extends JFrame {
         JLabel username_info = new JLabel("Numele utilizatorului");
         JLabel old_password_info = new JLabel("Vechea parolă");
         JLabel new_password_info = new JLabel("Noua parolă");
+        username_info.setForeground(Color.white);
+        old_password_info.setForeground(Color.white);
+        new_password_info.setForeground(Color.white);
         JButton change = new JButton("Salvează setările");
         JButton close = new JButton("Închide");
         username_info.setAlignmentX(JLabel.CENTER_ALIGNMENT);

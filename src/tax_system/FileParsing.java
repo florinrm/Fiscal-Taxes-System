@@ -68,6 +68,7 @@ public class FileParsing {
                 }
                 map.put(members[0], map_value);
             }
+            scan.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

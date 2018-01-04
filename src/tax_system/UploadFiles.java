@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 public class UploadFiles extends JFrame {
 
@@ -32,7 +33,7 @@ public class UploadFiles extends JFrame {
         super ("Încărcare de fișiere");
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         this.setForeground(Color.orange);
-        this.setMinimumSize(new Dimension(400, 500));
+        this.setMinimumSize(new Dimension(600, 400));
         this.setLayout(new FlowLayout());
         this.setIconImage(new ImageIcon("icons\\file_upload_icon.png").getImage());
         this.username = username;
@@ -49,15 +50,15 @@ public class UploadFiles extends JFrame {
         JButton delete_produs = new JButton("Șterge produse.txt");
         JButton delete_taxe = new JButton("Șterge taxe.txt");
         JButton delete_facturi = new JButton("Șterge facturi.txt");
-        produs.setFont(new Font("Calibri Light", Font.PLAIN, 20));
-        taxe.setFont(new Font("Calibri Light", Font.PLAIN, 20));
-        facturi.setFont(new Font("Calibri Light", Font.PLAIN, 20));
-        start.setFont(new Font("Calibri Light", Font.PLAIN, 20));
+        produs.setFont(new Font("Calibri Light", Font.PLAIN, 25));
+        taxe.setFont(new Font("Calibri Light", Font.PLAIN, 25));
+        facturi.setFont(new Font("Calibri Light", Font.PLAIN, 25));
+        start.setFont(new Font("Calibri Light", Font.PLAIN, 25));
         delete_facturi.setFont(new Font("Calibri Light", Font.PLAIN, 20));
         delete_produs.setFont(new Font("Calibri Light", Font.PLAIN, 20));
         delete_taxe.setFont(new Font("Calibri Light", Font.PLAIN, 20));
-        JLabel info = new JLabel("                           ");
-        info.setFont(new Font("Segoe UI", Font.PLAIN, 20));
+        JLabel info = new JLabel("                                   ");
+        info.setFont(new Font("Segoe UI", Font.PLAIN, 25));
 
         delete_produs.addActionListener(new ActionListener() {
             @Override
@@ -111,28 +112,23 @@ public class UploadFiles extends JFrame {
                 JButton button = (JButton) e.getSource();
                 if (button.getText().equals(produs.getText()))
                 {
-                    if (!new File ("produse.txt").exists()) {
                         produs_file.setDialogTitle("Alege produsele");
-                        produs_file.setCurrentDirectory(new File("C:\\"));
+                        produs_file.setCurrentDirectory(new File("."));
                         produs_file.setFileSelectionMode(JFileChooser.FILES_ONLY);
                         produs_file.showOpenDialog(null);
                         File file = produs_file.getSelectedFile();
                         while (file == null) {
                             info.setText("Choose a file!");
-                            taxe_file.showOpenDialog(null);
-                            file = taxe_file.getSelectedFile();
+                            produs_file.showOpenDialog(null);
+                            file = produs_file.getSelectedFile();
                         }
                         try {
-                            Files.copy(file.toPath(), new File ("produse.txt").toPath());
+                            Files.copy(file.toPath(), new File ("produse.txt").toPath(), StandardCopyOption.REPLACE_EXISTING);
                             info.setForeground(new Color(22, 122, 72));
                             info.setText("Fișierul produse.txt adăugat!");
                         } catch (IOException e1) {
                             e1.printStackTrace();
                         }
-                    } else {
-                        info.setForeground(new Color(186, 26, 63));
-                        info.setText("Fișierul produse.txt deja există!");
-                    }
                 }
             }
         });
@@ -142,9 +138,8 @@ public class UploadFiles extends JFrame {
                 JButton button = (JButton) e.getSource();
                 if (button.getText().equals(taxe.getText()))
                 {
-                    if (!new File ("taxe.txt").exists()) {
                         taxe_file.setDialogTitle("Alege taxele");
-                        taxe_file.setCurrentDirectory(new File("C:\\"));
+                        taxe_file.setCurrentDirectory(new File("."));
                         taxe_file.setFileSelectionMode(JFileChooser.FILES_ONLY);
                         taxe_file.showOpenDialog(null);
                         File file = taxe_file.getSelectedFile();
@@ -154,17 +149,12 @@ public class UploadFiles extends JFrame {
                             file = taxe_file.getSelectedFile();
                         }
                         try {
-                            Files.copy(file.toPath(), new File ("taxe.txt").toPath());
+                            Files.copy(file.toPath(), new File ("taxe.txt").toPath(), StandardCopyOption.REPLACE_EXISTING);
                             info.setForeground(new Color(22, 122, 72));
                             info.setText("Fișierul taxe.txt adăugat!");
                         } catch (IOException e1) {
                             e1.printStackTrace();
                         }
-
-                    } else {
-                        info.setForeground(new Color(186, 26, 63));
-                        info.setText("Fișierul taxe.txt deja există!");
-                    }
                 }
             }
         });
@@ -174,28 +164,23 @@ public class UploadFiles extends JFrame {
                 JButton button = (JButton) e.getSource();
                 if (button.getText().equals(facturi.getText()))
                 {
-                    if (!new File("facturi.txt").exists()) {
                         facturi_file.setDialogTitle("Alege facturile");
-                        facturi_file.setCurrentDirectory(new File("C:\\"));
+                        facturi_file.setCurrentDirectory(new File("."));
                         facturi_file.setFileSelectionMode(JFileChooser.FILES_ONLY);
                         facturi_file.showOpenDialog(null);
                         File file = facturi_file.getSelectedFile();
                         while (file == null) {
                             info.setText("Choose a file!");
-                            taxe_file.showOpenDialog(null);
-                            file = taxe_file.getSelectedFile();
+                            facturi_file.showOpenDialog(null);
+                            file = facturi_file.getSelectedFile();
                         }
                         try {
-                            Files.copy(file.toPath(), new File ("facturi.txt").toPath());
+                            Files.copy(file.toPath(), new File ("facturi.txt").toPath(), StandardCopyOption.REPLACE_EXISTING);
                             info.setForeground(new Color(22, 122, 72));
                             info.setText("Fișierul facturi.txt adăugat!");
                         } catch (IOException e1) {
                             e1.printStackTrace();
                         }
-                    } else {
-                        info.setForeground(new Color(186, 26, 63));
-                        info.setText("Fișierul facturi.txt deja există!");
-                    }
                 }
             }
         });
@@ -220,16 +205,16 @@ public class UploadFiles extends JFrame {
         panel2.setBackground(Color.pink);
         panel2.add(Box.createRigidArea(new Dimension(5,10)));
         panel2.add(produs);
-        panel2.add(Box.createRigidArea(new Dimension(5,10)));
-        panel2.add(delete_produs);
+        //panel2.add(Box.createRigidArea(new Dimension(5,10)));
+        //panel2.add(delete_produs);
         panel2.add(Box.createRigidArea(new Dimension(5,10)));
         panel2.add(taxe);
-        panel2.add(Box.createRigidArea(new Dimension(5,10)));
-        panel2.add(delete_taxe);
+        ///panel2.add(Box.createRigidArea(new Dimension(5,10)));
+        //panel2.add(delete_taxe);
         panel2.add(Box.createRigidArea(new Dimension(5,10)));
         panel2.add(facturi);
-        panel2.add(Box.createRigidArea(new Dimension(5,10)));
-        panel2.add(delete_facturi);
+        //panel2.add(Box.createRigidArea(new Dimension(5,10)));
+        //panel2.add(delete_facturi);
         panel2.add(Box.createRigidArea(new Dimension(5,10)));
         panel2.add(start);
         panel2.add(Box.createRigidArea(new Dimension(5,10)));

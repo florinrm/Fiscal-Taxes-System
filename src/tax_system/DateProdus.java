@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 //clasa de afisare a datelor unui produs dat
 public class DateProdus extends JFrame {
-    public DateProdus (String denumire, String categorie, ArrayList<Magazin> list_magazine) {
+    public DateProdus (String denumire, String categorie, String tara, ArrayList<Magazin> list_magazine) {
         super ("Date despre produsul " + denumire);
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         this.setMinimumSize(new Dimension(600, 400));
@@ -36,7 +36,8 @@ public class DateProdus extends JFrame {
                 for (int k = 0; k < list_magazine.get(i).facturi.get(j).lista_produse.size(); ++k) {
                     ProdusComandat prod = list_magazine.get(i).facturi.get(j).lista_produse.get(k);
                     if (denumire.equals(prod.getProdus().getDenumire())
-                            && categorie.equals(prod.getProdus().getCategorie())) {
+                            && categorie.equals(prod.getProdus().getCategorie())
+                            && tara.equals(prod.getProdus().getTaraOrigine())) {
                         found = true;
                         model1.addElement("Preț: " + prod.getProdus().getPret());
                         model1.addElement("Țară origine: " + prod.getProdus().getTaraOrigine());
