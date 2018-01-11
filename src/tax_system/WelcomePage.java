@@ -152,11 +152,47 @@ public class WelcomePage extends JFrame {
         //System.setOut(System.out);
     }
 
+    public void updateFacturiFile (String old_denumire, String new_denumire) {
+        File file = new File ("facturi.txt");
+        ArrayList <String> list = new ArrayList<>();
+        Scanner scan = null;
+        try {
+            scan = new Scanner (file);
+            while (scan.hasNextLine()) {
+                String line = scan.nextLine();
+                if (line.indexOf("Factura") == -1 && line.indexOf("Denumire") == -1
+                        && line.indexOf("Magazin") == -1 && line.length() > 0)
+                {
+                    System.out.println(line);
+                    String[] words = line.split(" ");
+                    int len = words[0].length();
+                    if (words[0].equals(old_denumire)) {
+                        words[0] = new_denumire;
+                    }
+                    line = words[0] + line.substring(len, line.length());
+                }
+                list.add(line);
+            }
+            scan.close();
+            FileWriter fw = new FileWriter("facturi1.txt");
+            for (String data: list) {
+                fw.write(data + "\n");
+            }
+            fw.close();
+            File copy = new File ("facturi1.txt");
+            Files.copy(copy.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            copy.delete();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public WelcomePage (String username, String parola) {
         super ("Sistem de facturi fiscale");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setBackground(Color.BLUE);
-        this.setMinimumSize(new Dimension(1100, 800));
+        this.setMinimumSize(new Dimension(1100, 850));
         this.getContentPane().setLayout(new BorderLayout(10, 10));
         ImageIcon icon = new ImageIcon("icons\\dollar_icon.jpg");
         this.setIconImage(icon.getImage());
@@ -196,7 +232,7 @@ public class WelcomePage extends JFrame {
         button_panel.setBackground(new Color(104, 11, 31));
         button_panel.setLayout(new BoxLayout(button_panel, BoxLayout.PAGE_AXIS));
         button_panel.add(Box.createRigidArea(new Dimension(20,0)));
-        button_panel.add(logout);
+        //button_panel.add(logout);
         logout.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -222,13 +258,18 @@ public class WelcomePage extends JFrame {
                 }
             }
         });
+        JPanel start_buttons = new JPanel();
+        start_buttons.setLayout(new BoxLayout(start_buttons, BoxLayout.LINE_AXIS));
+        start_buttons.setBackground(new Color(104, 11, 31));
+        start_buttons.add(logout);
+        start_buttons.add(Box.createRigidArea(new Dimension(20,10)));
+        start_buttons.add(close);
+        start_buttons.add(Box.createRigidArea(new Dimension(20,10)));
+        start_buttons.add(restart);
+
         close.setAlignmentX(JButton.CENTER_ALIGNMENT);
-        login_box.add(Box.createRigidArea(new Dimension(10,10)));
-        login_box.add(button_panel);
-        login_box.add(Box.createRigidArea(new Dimension(10,10)));
-        login_box.add(close);
-        login_box.add(Box.createRigidArea(new Dimension(10,10)));
-        login_box.add(restart);
+        login_box.add(Box.createRigidArea(new Dimension(10,20)));
+        login_box.add(start_buttons);
         this.info1.add(Box.createRigidArea(new Dimension(10,10)));
         this.info1.add(login_box);
 
@@ -498,6 +539,26 @@ public class WelcomePage extends JFrame {
             }
         });
 
+        JButton open_file_output = new JButton("Deschide out.txt");
+        open_file_output.setFont(new Font("Calibri Light", Font.PLAIN, 25));
+        open_file_output.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JButton button = (JButton) e.getSource();
+                if (button.getText().equals(open_file_output.getText())) {
+                    try {
+                        Desktop desktop = null;
+                        if (Desktop.isDesktopSupported()) {
+                            desktop = Desktop.getDesktop();
+                        }
+                        desktop.open(new File("out.txt"));
+                    } catch (IOException ioe) {
+                        ioe.printStackTrace();
+                    }
+                }
+            }
+        });
+
         button_box.setBackground(Color.pink);
         // button_box.add(Box.createRigidArea(new Dimension(5,10)));
         button_box.add(some_space);
@@ -516,6 +577,8 @@ public class WelcomePage extends JFrame {
         //button_box.add(delete_facturi);
         button_box.add(Box.createRigidArea(new Dimension(5,15)));
         button_box.add(gestiune);
+        button_box.add(Box.createRigidArea(new Dimension(5,15)));
+        button_box.add(open_file_output);
         button_box.add(Box.createRigidArea(new Dimension(5,15)));
         button_box.add(info);
         button_box.add(Box.createRigidArea(new Dimension(5,60)));
@@ -631,7 +694,7 @@ public class WelcomePage extends JFrame {
             Magazin magazin_country = getMagazinMaxTara(list_magazine, country);
             model1.addElement("Magazinul cu cele mai mari vânzari în " + country);
             model1.addElement("---------------------------------------");
-            model1.addElement("Nume: " + maximum_maga.nume);
+            model1.addElement("Nume: " + magazin_country.nume);
             model1.addElement("Totalul fără taxe: "
                     + df.format(magazin_country.getTotalFaraTaxe()).replaceAll(",", "."));
             model1.addElement("Totalul cu taxe: "
@@ -887,7 +950,7 @@ public class WelcomePage extends JFrame {
                                 Magazin magazin_country = getMagazinMaxTara(list_magazine, country);
                                 model1.addElement("Magazinul cu cele mai mari vânzari în " + country);
                                 model1.addElement("---------------------------------------");
-                                model1.addElement("Nume: " + maximum_maga.nume);
+                                model1.addElement("Nume: " + magazin_country.nume);
                                 model1.addElement("Totalul fără taxe: "
                                         + df.format(magazin_country.getTotalFaraTaxe()).replaceAll(",", "."));
                                 model1.addElement("Totalul cu taxe: "
@@ -1018,7 +1081,7 @@ public class WelcomePage extends JFrame {
                                 Magazin magazin_country = getMagazinMaxTara(list_magazine, country);
                                 model1.addElement("Magazinul cu cele mai mari vânzări în " + country);
                                 model1.addElement("---------------------------------------");
-                                model1.addElement("Nume: " + maximum_maga.nume);
+                                model1.addElement("Nume: " + magazin_country.nume);
                                 model1.addElement("Totalul fără taxe: "
                                         + df.format(magazin_country.getTotalFaraTaxe()).replaceAll(",", "."));
                                 model1.addElement("Totalul cu taxe: "
@@ -1123,6 +1186,10 @@ public class WelcomePage extends JFrame {
                     if (original_denumire.length() == 0 || final_denumire.length() == 0 || final_pret.length() == 0) {
                         edit_result.setText("Completați toate câmpurile");
                         edit_result.setForeground(new Color(186, 26, 63));
+                    }
+                    else if (new Double (Double.parseDouble(final_pret)).compareTo(new Double(0)) <= 0) {
+                        edit_result.setText("Preț nou invalid");
+                        edit_result.setForeground(new Color(186, 26, 63));
                     } else {
                         if (checkProdus(list_produse, original_denumire, categorie, tara)) {
                             double final_price = Double.parseDouble(final_pret);
@@ -1142,6 +1209,9 @@ public class WelcomePage extends JFrame {
                                     }
                                 }
                             }
+
+                            updateFacturiFile(original_denumire, final_denumire);
+
                             model_produse.removeAllElements();
                             for (int i = 0; i < list_produse.size(); ++i) {
                                 if (! new Double (list_produse.get(i).getPret()).equals(new Double(0))) {
@@ -1194,7 +1264,7 @@ public class WelcomePage extends JFrame {
                                 Magazin magazin_country = getMagazinMaxTara(list_magazine, country);
                                 model1.addElement("Magazinul cu cele mai mari vânzari în " + country);
                                 model1.addElement("---------------------------------------");
-                                model1.addElement("Nume: " + maximum_maga.nume);
+                                model1.addElement("Nume: " + magazin_country.nume);
                                 model1.addElement("Totalul fără taxe: "
                                         + df.format(magazin_country.getTotalFaraTaxe()).replaceAll(",", "."));
                                 model1.addElement("Totalul cu taxe: "
@@ -1229,6 +1299,18 @@ public class WelcomePage extends JFrame {
             }
         });
 
+        JButton instructions = new JButton("Instrucțiuni");
+        instructions.setFont(new Font("Calibri Light", Font.PLAIN, 15));
+        instructions.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JButton button = (JButton) e.getSource();
+                if (button.getText().equals(instructions.getText())) {
+                    new Instructions();
+                }
+            }
+        });
+
         minipanel1.add(criteriu);
         minipanel1.add(Box.createRigidArea(new Dimension(5,10)));
         minipanel1.add(list_options);
@@ -1254,6 +1336,8 @@ public class WelcomePage extends JFrame {
         minipanel1.add(editeaza);
         minipanel1.add(Box.createRigidArea(new Dimension(5,10)));
         minipanel1.add(edit_result);
+        minipanel1.add(Box.createRigidArea(new Dimension(5,10)));
+        minipanel1.add(instructions);
         panel3.add(Box.createRigidArea(new Dimension(30,10)));
         panel3.add(scrolling);
         panel3.add(Box.createRigidArea(new Dimension(50,10)));

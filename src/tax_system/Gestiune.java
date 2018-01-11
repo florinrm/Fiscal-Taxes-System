@@ -42,7 +42,7 @@ public final class Gestiune {
                     result += magazine.get(i) + "\n";
             }
         }
-        return result;
+        return result.trim();
     }
 
     // Singleton pattern
