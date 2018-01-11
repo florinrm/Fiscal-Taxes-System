@@ -40,3 +40,54 @@ utilizatorului. Fereastra construita in cadrul acestei clase contine:
 	Daca parola veche sau username-ul sunt gresite, va fi afisat un mesaj
 de avertizare sub butoane. In cazul in care ambele sunt corecte, parola veche
 criptate va fi inlocuita de noua parola criptata, in login.txt.
+
+	3) UploadFiles - o clasa GUI, care se ocupa cu incarcarea fisierelor - o
+fereastra ce apare in caz ca nu sunt toate fisierele ce trebuiesc parsate in 
+radacina proiectului, dupa ce user-ul este logat cu succes si inainte de lansarea
+aplicatiei propriu zise. Fereastra contine 4 butoane (3 de upload si inca unul
+pentru start aplicatie)
+
+	4) WelcomePage - clasa GUI, fereastra aplicatiei propriu zise. Aceasta contine
+un JTabbedPane cu 4 taburi:
+	- primul este legat de user-ul logat, cu 3 butoane (inchidere aplicatie, restart
+aplicatie - apare fereastra de login cu informatiile userului, adica nume si parola,
+si delogare user)
+	- al doilea este o pagina de fisiere, similara cu UploadFiles, cu 3 butoane de
+incarcare, un buton de realizare a gestiunii si un buton de afisare a fisierului
+out.txt (in caz ca se doreste inlocuirea unui fisier)
+	- al treilea este o pagina legata de produse, unde am un JList unde afisez
+lista de produse, butoane de adaugare / editare / stergere / cautare produs si 
+mai multe JTextField-uri folosite la adaugarea / stergerea / editatea produselor,
+plus JLabel-uri care vor afisa mesaje corespunzatoare JTextField-urilor completate
+de user si de actiunile intreprinse de acesta + buton de instructiuni
+	- al patrulea - pagina de statistica a magazinelor, folosind un JPanel pentru
+magazinul si factura cu cele mai mari costuri per total si 2 JListuri pentru
+magazinele cu cele mai mari costuri pe tari si categorii
+
+	5) DateProdus - fereastra ce afiseaza lista de magazine in care se gaseste 
+un produs cautat (prin apasarea butonului cauta produs din WelcomePage - tabul 3)
+
+	6) Main - clasa in care este realizata gestiunea produselor din magazine
+
+	7) FileParsing - clasa in care am metode de parsare a fisierelor si construire
+a structurilor de date folosite in realizarea gestiunii
+
+	8) Produs - clasa ceruta in enuntul temei
+
+	9) Factura - clasa ceruta in enuntul temei + implementeaza Comparable pentru
+sortarea in privinta gestiunii
+
+	10) IMagazin - interfata ceruta in enuntul temei
+
+	11) Magazin + clasele mostenitoare - cele cerute in enunt
+
+	12) Gestiune - aici realizez toString-ul care a afisat in out.txt
+
+	13) Instructions - clasa GUI (fereastra) ce descrie instructiunile pentru
+pagina de produse
+
+	P.S. Am folosit IntelliJ deoarece este un IDE de mare ajutor (autocomplete,
+vezi ce metode au fost folosite sau nu in cadrul proiectului, autosugestie) +
+imi place interfata acestuia, fiind obisnuit sa lucrez cu AndroidStudio, care
+e derivat din IntelliJ
+	
